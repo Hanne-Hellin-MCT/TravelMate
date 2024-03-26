@@ -12,3 +12,5 @@ De persoon die de reis heeft gemaakt krijgt dan de mensen te zien die interesses
 ### Design
 
 https://www.figma.com/file/HpbQBvNsc2Ls3LNcBPkxCX/onboarding-motion-design?type=design&node-id=0%3A1&mode=dev&t=TFXSl5l3NzVWuVuh-1
+
+
