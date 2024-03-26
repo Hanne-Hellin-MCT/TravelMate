@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:travelmate/widgets/setupaccount/setupaccountname.dart';
+import 'package:travelmate/widgets/setupaccount/setupaccountbirthdate.dart';
+import 'package:travelmate/widgets/setupaccount/setupaccountgender.dart';
+import 'package:travelmate/widgets/setupaccount/setupaccountinterests.dart';
+import 'package:travelmate/widgets/setupaccount/setupaccountphotos.dart';
+import 'package:travelmate/widgets/setupaccount/setupaccountbio.dart';
+import 'package:travelmate/widgets/setupaccount/setupaccountvoorkeuren.dart';
 
 class SetupAccount extends StatefulWidget {
   const SetupAccount({Key? key}) : super(key: key);
@@ -9,12 +16,13 @@ class SetupAccount extends StatefulWidget {
 }
 
 class _SetupAccountState extends State<SetupAccount> {
-  double _progressValue = 1.0; // Voortgangswaarde tussen 0 en 1
+  double _progressValue = 0.5; // Voortgangswaarde tussen 0 en 1
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           LinearProgressIndicator(
             //hoogte van de voortgangsbalk
@@ -28,11 +36,7 @@ class _SetupAccountState extends State<SetupAccount> {
             valueColor: const AlwaysStoppedAnimation<Color>(
                 Color(0xFFFBB03B)), // Voortgangskleur
           ),
-          const Expanded(
-            child: Center(
-              child: Text("Hello World!"),
-            ),
-          ),
+          const SetupAccountVoorkeuren(),
         ],
       ),
     );

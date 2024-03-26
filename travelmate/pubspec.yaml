@@ -22,3 +22,5 @@ flutter:
 
   assets:
     - lib/assets/logo.svg
+    - lib/assets/pasport.svg
+    - lib/assets/wallet.svg

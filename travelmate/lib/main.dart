@@ -23,7 +23,10 @@ class MainApp extends StatelessWidget {
         ),
       ),
       home: const Scaffold(
-        body: SetupAccount(),
+        body: Padding(
+          padding: EdgeInsets.only(top: 25),
+          child: SetupAccount(),
+        ),
       ),
     );
   }
