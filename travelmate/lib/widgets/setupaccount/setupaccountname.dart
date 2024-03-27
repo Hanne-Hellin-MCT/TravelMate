@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:travelmate/provider/SetupAccountProvider.dart';
+import 'package:provider/provider.dart';
 
 class SetupAccountName extends StatelessWidget {
   const SetupAccountName({
@@ -37,10 +39,10 @@ class SetupAccountName extends StatelessWidget {
             ),
           ),
         ),
-        const Padding(
-          padding: EdgeInsets.only(top: 10, left: 20, right: 20),
+        Padding(
+          padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
           child: TextField(
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: 'Vul je voornaam in',
               hintStyle: TextStyle(
                 color: Colors.grey,
@@ -55,6 +57,10 @@ class SetupAccountName extends StatelessWidget {
                 borderSide: BorderSide(color: Color(0xFFFBB03B), width: 1.0),
               ),
             ),
+            onChanged: (newName) {
+              Provider.of<SetupAccountData>(context, listen: false)
+                  .setName(newName);
+            },
           ),
         ),
         Padding(
@@ -79,35 +85,6 @@ class SetupAccountName extends StatelessWidget {
                   ),
                 ),
               ],
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFF7F6F0),
-                side: const BorderSide(color: Color(0xFFFBB03B), width: 2.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              child: Container(
-                width: double.infinity, // Volledige breedte
-                padding: const EdgeInsets.symmetric(
-                    vertical: 12.0), // Aangepaste padding
-                child: const Text(
-                  'Volgende',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 20,
-                  ),
-                  textAlign: TextAlign.center, // Tekst centreren binnen de knop
-                ),
-              ),
             ),
           ),
         ),

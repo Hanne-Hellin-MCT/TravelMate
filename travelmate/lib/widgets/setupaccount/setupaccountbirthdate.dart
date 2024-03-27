@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:travelmate/provider/SetupAccountProvider.dart';
+import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
 class SetupAccountBirthdate extends StatefulWidget {
   const SetupAccountBirthdate({
@@ -23,6 +26,10 @@ class _SetupAccountBirthdateState extends State<SetupAccountBirthdate> {
       setState(() {
         _selectedDate = picked;
       });
+      String formattedDate = DateFormat('dd-MM-yyyy').format(_selectedDate!);
+      // Stel de geformatteerde datum in op de provider
+      // ignore: use_build_context_synchronously
+      context.read<SetupAccountData>().setBirthdate(formattedDate);
     }
   }
 
@@ -101,35 +108,6 @@ class _SetupAccountBirthdateState extends State<SetupAccountBirthdate> {
                         : Colors.grey,
                   ),
                 ],
-              ),
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFF7F6F0),
-                side: const BorderSide(color: Color(0xFFFBB03B), width: 2.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              child: Container(
-                width: double.infinity, // Volledige breedte
-                padding: const EdgeInsets.symmetric(
-                    vertical: 12.0), // Aangepaste padding
-                child: const Text(
-                  'Volgende',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 20,
-                  ),
-                  textAlign: TextAlign.center, // Tekst centreren binnen de knop
-                ),
               ),
             ),
           ),

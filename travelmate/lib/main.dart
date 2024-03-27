@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:travelmate/routes/auth/credentials.dart';
+import 'package:travelmate/provider/SetupAccountProvider.dart';
 import 'package:travelmate/routes/setupaccount/setupaccount.dart';
 
 void main() {
@@ -22,10 +24,13 @@ class MainApp extends StatelessWidget {
           bodyLarge: TextStyle(color: Color(0xFF000000)),
         ),
       ),
-      home: const Scaffold(
-        body: Padding(
-          padding: EdgeInsets.only(top: 25),
-          child: SetupAccount(),
+      home: ChangeNotifierProvider(
+        create: (context) => SetupAccountData(),
+        child: const Scaffold(
+          body: Padding(
+            padding: EdgeInsets.only(top: 25),
+            child: SetupAccount(),
+          ),
         ),
       ),
     );

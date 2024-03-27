@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:travelmate/provider/SetupAccountProvider.dart';
+import 'package:provider/provider.dart';
 
 class SetupAccountVoorkeuren extends StatefulWidget {
   const SetupAccountVoorkeuren({
@@ -16,14 +18,25 @@ class _SetupAccountVoorkeurenState extends State<SetupAccountVoorkeuren> {
     'Iedereen',
   ];
 
-  String selectedGender = '';
+  final List<String> afstand = [
+    'Vlaanderen',
+    'België',
+    'Benelux',
+    'Europa',
+    'Wereldwijd'
+  ];
+
+  String selectedAfstand = '';
 
 // De begin- en eindwaarden van de slider
-  double _startValue = 18.0;
-  double _endValue = 25.0;
+  double _startValue = 18;
+  double _endValue = 25;
 
 // Functie om de waarden van de slider bij te werken
   void _updateValues(double startValue, double endValue) {
+    //update in provider
+    context.read<SetupAccountData>().setLeeftijdvoorkeur(
+        '$_startValue - $_endValue'); // Update de waarden in de provider
     setState(() {
       _startValue = startValue;
       _endValue = endValue;
@@ -64,47 +77,46 @@ class _SetupAccountVoorkeurenState extends State<SetupAccountVoorkeuren> {
         Padding(
           padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
           child: Wrap(
-            spacing: 10.0, // Ruimte tussen de chips
-            runSpacing: 10.0, // Ruimte tussen de rijen
-            children: gender
-                .map(
-                  (gender) => ChoiceChip(
-                    label: Text(gender),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 8.0,
-                        vertical: 4.0), // Aangepaste interne padding
-                    selected: selectedGender.contains(gender),
-                    onSelected: (selected) {
-                      setState(() {
-                        if (selected) {
-                          selectedGender = gender;
-                        } else {
-                          selectedGender = '';
-                        }
-                      });
-                    },
-                    shape: RoundedRectangleBorder(
-                      side: const BorderSide(
-                        color: Color(
-                            0xFFFBB03B), // Geen randkleur als niet geselecteerd
-                        width: 2.0, // Dikte van de rand
-                      ),
-                      borderRadius: BorderRadius.circular(
-                          10.0), // Borderradius van de chip
-                    ),
-                    backgroundColor: const Color(0xFFF7F6F0),
-                    selectedColor: const Color(0xFFFBB03B),
-                    labelStyle: TextStyle(
-                      fontSize: 16,
-                      color: selectedGender.contains(gender)
-                          ? Colors.white // Witte tekst als geselecteerd
-                          : Colors.black,
-                      // Zwarte tekst als niet geselecteerd
-                    ),
-                    showCheckmark: false, // Verberg het selectievinkje
+            spacing: 10.0,
+            children: gender.map((gender) {
+              return ChoiceChip(
+                label: Text(gender),
+                selected: context
+                    .watch<SetupAccountData>()
+                    .gendervoorkeur
+                    .contains(gender),
+                onSelected: (selected) {
+                  setState(() {
+                    if (selected) {
+                      context
+                          .read<SetupAccountData>()
+                          .setGendervoorkeur(gender);
+                    } else {
+                      context.read<SetupAccountData>().setGendervoorkeur('');
+                    }
+                  });
+                },
+                shape: RoundedRectangleBorder(
+                  side: const BorderSide(
+                    color: Color(0xFFFBB03B),
+                    width: 2.0,
                   ),
-                )
-                .toList(),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                backgroundColor: const Color(0xFFF7F6F0),
+                selectedColor: const Color(0xFFFBB03B),
+                labelStyle: TextStyle(
+                  fontSize: 16,
+                  color: context
+                          .watch<SetupAccountData>()
+                          .gendervoorkeur
+                          .contains(gender)
+                      ? Colors.white
+                      : Colors.black,
+                ),
+                showCheckmark: false,
+              );
+            }).toList(),
           ),
         ),
         const Padding(
@@ -128,7 +140,7 @@ class _SetupAccountVoorkeurenState extends State<SetupAccountVoorkeuren> {
                     textAlign: TextAlign.start,
                   ),
                   Text(
-                    ' $_startValue - $_endValue', // Dynamisch tekstgedeelte met de geselecteerde waarden
+                    ' ${_startValue.toStringAsFixed(_startValue.truncateToDouble() == _startValue ? 0 : 2)} - ${_endValue.toStringAsFixed(_endValue.truncateToDouble() == _endValue ? 0 : 2)}',
                     style: const TextStyle(
                       fontSize: 16,
                       color: Color(0xFF6B6B6B),
@@ -136,7 +148,6 @@ class _SetupAccountVoorkeurenState extends State<SetupAccountVoorkeuren> {
                   ),
                 ],
               ),
-              // Hier plaats je de SliderTheme met de RangeSlider
               SliderTheme(
                 data: SliderTheme.of(context).copyWith(
                   activeTrackColor: const Color(0xFFFBB03B),
@@ -154,44 +165,79 @@ class _SetupAccountVoorkeurenState extends State<SetupAccountVoorkeuren> {
                   onChanged: (RangeValues values) {
                     _updateValues(values.start, values.end);
                   },
-                  min: 18.0,
-                  max: 100.0,
+                  min: 18,
+                  max: 100,
                   divisions:
                       82, // Aantal tussenliggende waarden (100 - 18 = 82)
                   labels: RangeLabels(
-                      '$_startValue', '$_endValue'), // Labels voor de waarden
+                    _startValue.toStringAsFixed(0),
+                    _endValue.toStringAsFixed(0),
+                  ),
                 ),
               ),
             ],
           ),
         ),
+        const Padding(
+          padding: EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 10),
+          child: Divider(
+            color: Color(0xFFFBB03B),
+            thickness: 2,
+            height: 10,
+          ),
+        ),
+        const Padding(
+          padding: EdgeInsets.only(left: 20, top: 20),
+          child: Text(
+            'Afstand:',
+            style: TextStyle(fontSize: 20, color: Color(0xFF000000)),
+            textAlign: TextAlign.start,
+          ),
+        ),
         Padding(
-          padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFF7F6F0),
-                side: const BorderSide(color: Color(0xFFFBB03B), width: 2.0),
+          padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
+          child: Wrap(
+            spacing: 10.0,
+            runSpacing: 10.0,
+            children: afstand.map((afstand) {
+              return ChoiceChip(
+                label: Text(afstand),
+                selected: context
+                    .watch<SetupAccountData>()
+                    .afstandvoorkeur
+                    .contains(afstand),
+                onSelected: (selected) {
+                  setState(() {
+                    if (selected) {
+                      context
+                          .read<SetupAccountData>()
+                          .setAfstandvoorkeur(afstand);
+                    } else {
+                      context.read<SetupAccountData>().setAfstandvoorkeur('');
+                    }
+                  });
+                },
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              child: Container(
-                width: double.infinity, // Volledige breedte
-                padding: const EdgeInsets.symmetric(
-                    vertical: 12.0), // Aangepaste padding
-                child: const Text(
-                  'Volgende',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 20,
+                  side: const BorderSide(
+                    color: Color(0xFFFBB03B),
+                    width: 2.0,
                   ),
-                  textAlign: TextAlign.center, // Tekst centreren binnen de knop
+                  borderRadius: BorderRadius.circular(10.0),
                 ),
-              ),
-            ),
+                backgroundColor: const Color(0xFFF7F6F0),
+                selectedColor: const Color(0xFFFBB03B),
+                labelStyle: TextStyle(
+                  fontSize: 16,
+                  color: context
+                          .watch<SetupAccountData>()
+                          .afstandvoorkeur
+                          .contains(afstand)
+                      ? Colors.white
+                      : Colors.black,
+                ),
+                showCheckmark: false,
+              );
+            }).toList(),
           ),
         ),
       ],

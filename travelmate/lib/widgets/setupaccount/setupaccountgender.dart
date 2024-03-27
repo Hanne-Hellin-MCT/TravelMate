@@ -1,9 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:travelmate/provider/SetupAccountProvider.dart';
+import 'package:provider/provider.dart';
 
-class SetupAccountGender extends StatelessWidget {
+class SetupAccountGender extends StatefulWidget {
   const SetupAccountGender({
     super.key,
   });
+
+  @override
+  State<SetupAccountGender> createState() => _SetupAccountGenderState();
+}
+
+class _SetupAccountGenderState extends State<SetupAccountGender> {
+  final List<String> gender = [
+    'Man',
+    'Vrouw',
+    'Iedereen',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -38,90 +51,49 @@ class SetupAccountGender extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFF7F6F0),
-                side: const BorderSide(color: Color(0xFFFBB03B), width: 2.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              child: Container(
-                width: double.infinity, // Volledige breedte
-                padding: const EdgeInsets.symmetric(
-                    vertical: 12.0), // Aangepaste padding
-                child: const Text(
-                  'Man',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 20,
+          padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: gender.map((gender) {
+              final bool isSelected = context
+                  .watch<SetupAccountData>()
+                  .gender
+                  .contains(
+                      gender); // Lees de geselecteerde waarde uit de provider
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ElevatedButton(
+                  onPressed: () {
+                    context.read<SetupAccountData>().setGender(
+                        gender); // Werk de geselecteerde waarde bij in de provider
+                  },
+                  style: ElevatedButton.styleFrom(
+                    side: const BorderSide(
+                      color: Color(0xFFFBB03B),
+                      width: 2.0,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    backgroundColor: isSelected
+                        ? const Color(0xFFFBB03B)
+                        : const Color(0xFFF7F6F0),
                   ),
-                  textAlign: TextAlign.center, // Tekst centreren binnen de knop
-                ),
-              ),
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFF7F6F0),
-                side: const BorderSide(color: Color(0xFFFBB03B), width: 2.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              child: Container(
-                width: double.infinity, // Volledige breedte
-                padding: const EdgeInsets.symmetric(
-                    vertical: 12.0), // Aangepaste padding
-                child: const Text(
-                  'Vrouw',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 20,
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 12.0),
+                    child: Text(
+                      gender,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: isSelected ? Colors.white : Colors.black,
+                      ),
+                    ),
                   ),
-                  textAlign: TextAlign.center, // Tekst centreren binnen de knop
                 ),
-              ),
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFF7F6F0),
-                side: const BorderSide(color: Color(0xFFFBB03B), width: 2.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              child: Container(
-                width: double.infinity, // Volledige breedte
-                padding: const EdgeInsets.symmetric(
-                    vertical: 12.0), // Aangepaste padding
-                child: const Text(
-                  'Anders',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 20,
-                  ),
-                  textAlign: TextAlign.center, // Tekst centreren binnen de knop
-                ),
-              ),
-            ),
+              );
+            }).toList(),
           ),
         ),
       ],

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:travelmate/provider/SetupAccountProvider.dart';
+import 'package:provider/provider.dart';
 
 class SetupAccountInterests extends StatefulWidget {
   const SetupAccountInterests({
@@ -31,8 +33,6 @@ class _SetupAccountInterestsState extends State<SetupAccountInterests> {
     'Bed & Breakfast',
     'Glamping',
   ];
-
-  List<String> selectedInterests = [];
 
   @override
   Widget build(BuildContext context) {
@@ -106,13 +106,20 @@ class _SetupAccountInterestsState extends State<SetupAccountInterests> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8.0,
                             vertical: 4.0), // Aangepaste interne padding
-                        selected: selectedInterests.contains(interest),
+                        selected: context
+                            .read<SetupAccountData>()
+                            .interests
+                            .contains(interest),
                         onSelected: (selected) {
                           setState(() {
                             if (selected) {
-                              selectedInterests.add(interest);
+                              context
+                                  .read<SetupAccountData>()
+                                  .addInterest(interest);
                             } else {
-                              selectedInterests.remove(interest);
+                              context
+                                  .read<SetupAccountData>()
+                                  .removeInterest(interest);
                             }
                           });
                         },
@@ -129,7 +136,10 @@ class _SetupAccountInterestsState extends State<SetupAccountInterests> {
                         selectedColor: const Color(0xFFFBB03B),
                         labelStyle: TextStyle(
                           fontSize: 16,
-                          color: selectedInterests.contains(interest)
+                          color: context
+                                  .read<SetupAccountData>()
+                                  .interests
+                                  .contains(interest)
                               ? Colors.white // Witte tekst als geselecteerd
                               : Colors.black,
                           // Zwarte tekst als niet geselecteerd
@@ -188,13 +198,20 @@ class _SetupAccountInterestsState extends State<SetupAccountInterests> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8.0,
                             vertical: 4.0), // Aangepaste interne padding
-                        selected: selectedInterests.contains(interest),
+                        selected: context
+                            .read<SetupAccountData>()
+                            .interests
+                            .contains(interest),
                         onSelected: (selected) {
                           setState(() {
                             if (selected) {
-                              selectedInterests.add(interest);
+                              context
+                                  .read<SetupAccountData>()
+                                  .addInterest(interest);
                             } else {
-                              selectedInterests.remove(interest);
+                              context
+                                  .read<SetupAccountData>()
+                                  .removeInterest(interest);
                             }
                           });
                         },
@@ -211,7 +228,10 @@ class _SetupAccountInterestsState extends State<SetupAccountInterests> {
                         selectedColor: const Color(0xFFFBB03B),
                         labelStyle: TextStyle(
                           fontSize: 16,
-                          color: selectedInterests.contains(interest)
+                          color: context
+                                  .read<SetupAccountData>()
+                                  .interests
+                                  .contains(interest)
                               ? Colors.white // Witte tekst als geselecteerd
                               : Colors.black,
                           // Zwarte tekst als niet geselecteerd
@@ -231,38 +251,6 @@ class _SetupAccountInterestsState extends State<SetupAccountInterests> {
               ),
             ),
           ],
-        ),
-
-        Padding(
-          padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: ElevatedButton(
-              onPressed: () {
-                print(selectedInterests);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFF7F6F0),
-                side: const BorderSide(color: Color(0xFFFBB03B), width: 2.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              child: Container(
-                width: double.infinity, // Volledige breedte
-                padding: const EdgeInsets.symmetric(
-                    vertical: 12.0), // Aangepaste padding
-                child: const Text(
-                  'Volgende',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 20,
-                  ),
-                  textAlign: TextAlign.center, // Tekst centreren binnen de knop
-                ),
-              ),
-            ),
-          ),
         ),
       ],
     );
