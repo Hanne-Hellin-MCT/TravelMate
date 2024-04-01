@@ -9,6 +9,8 @@ class SetupAccountName extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String currentName = Provider.of<SetupAccountData>(context).name ?? '';
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -57,6 +59,7 @@ class SetupAccountName extends StatelessWidget {
                 borderSide: BorderSide(color: Color(0xFFFBB03B), width: 1.0),
               ),
             ),
+            controller: TextEditingController(text: currentName),
             onChanged: (newName) {
               Provider.of<SetupAccountData>(context, listen: false)
                   .setName(newName);

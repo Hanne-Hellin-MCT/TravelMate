@@ -14,6 +14,32 @@ class SetupAccountBirthdate extends StatefulWidget {
 
 class _SetupAccountBirthdateState extends State<SetupAccountBirthdate> {
   DateTime? _selectedDate;
+  TextEditingController _dateController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Haal de geboortedatum op als een string uit de provider
+    String? birthdateString =
+        Provider.of<SetupAccountData>(context, listen: false).birthdate;
+    // Converteer de string naar een DateTime object
+    _selectedDate = _parseBirthdate(birthdateString);
+    // Stel de controller in met de geconverteerde datum
+    _dateController.text = _selectedDate != null
+        ? DateFormat('dd-MM-yyyy').format(_selectedDate!)
+        : 'Selecteer een datum';
+  }
+
+  DateTime? _parseBirthdate(String? birthdateString) {
+    if (birthdateString != null) {
+      try {
+        return DateFormat('dd-MM-yyyy').parse(birthdateString);
+      } catch (e) {
+        print('Fout bij het parseren van geboortedatum: $e');
+      }
+    }
+    return null;
+  }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -69,25 +95,25 @@ class _SetupAccountBirthdateState extends State<SetupAccountBirthdate> {
           padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
           child: ElevatedButton(
             onPressed: () => _selectDate(context),
-            style: ButtonStyle(
-              backgroundColor:
-                  MaterialStateProperty.all<Color>(const Color(0xFFF7F6F0)),
-              elevation: MaterialStateProperty.all<double>(0),
-              padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                  EdgeInsets.zero),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFF7F6F0),
+              elevation: 0,
+              padding: EdgeInsets.zero,
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.zero, side: BorderSide.none),
             ),
             child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 10.0),
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
                     color: _selectedDate != null
                         ? const Color(0xFFFBB03B)
-                        : Colors.grey,
+                        : Colors.transparent,
                     width: 1.0,
                   ),
                 ),
               ),
-              padding: const EdgeInsets.symmetric(vertical: 10.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

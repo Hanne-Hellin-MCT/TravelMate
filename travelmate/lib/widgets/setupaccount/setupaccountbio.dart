@@ -4,10 +4,32 @@ import 'package:flutter/material.dart';
 import 'package:travelmate/provider/SetupAccountProvider.dart';
 import 'package:provider/provider.dart';
 
-class SetupAccountBio extends StatelessWidget {
+class SetupAccountBio extends StatefulWidget {
   const SetupAccountBio({
     super.key,
   });
+
+  @override
+  State<SetupAccountBio> createState() => _SetupAccountBioState();
+}
+
+class _SetupAccountBioState extends State<SetupAccountBio> {
+  late TextEditingController _bioController;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialiseer de controller met de huidige bio uit de provider
+    _bioController = TextEditingController(
+        text: Provider.of<SetupAccountData>(context, listen: false).bio);
+  }
+
+  @override
+  void dispose() {
+    // Verwijder de controller om geheugenlekken te voorkomen
+    _bioController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +68,7 @@ class SetupAccountBio extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
           child: TextField(
+              controller: _bioController,
               maxLines: 5,
               decoration: InputDecoration(
                 hintText: currentBio.isNotEmpty ? currentBio : 'Schrijf iets',
