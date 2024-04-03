@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:travelmate/routes/auth/credentials.dart';
 import 'package:travelmate/provider/SetupAccountProvider.dart';
 import 'package:travelmate/routes/setupaccount/setupaccount.dart';
+import 'package:travelmate/routes/travel/travelnavigationbar.dart';
 
 void main() {
   runApp(const MainApp());
@@ -29,7 +30,7 @@ class MainApp extends StatelessWidget {
         child: const Scaffold(
           body: Padding(
             padding: EdgeInsets.only(top: 25),
-            child: SetupAccount(),
+            child: TravelMateNavigation(),
           ),
         ),
       ),
