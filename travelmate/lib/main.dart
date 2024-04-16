@@ -10,6 +10,13 @@ import 'package:travelmate/provider/AddTripProvider.dart';
 
 void main() {
   runApp(const MainApp());
+  MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (_) => SetupAccountData()),
+      ChangeNotifierProvider(create: (_) => AddTripData()),
+    ],
+    child: const MainApp(),
+  );
 }
 
 class MainApp extends StatelessWidget {
@@ -17,30 +24,24 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => SetupAccountData()),
-        ChangeNotifierProvider(create: (_) => AddTripData()),
-      ],
-      child: MaterialApp(
-        routes: {
-          '/addtrip': (context) => AddTrip(),
-        },
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSwatch().copyWith(
-            secondary: const Color(0xFFF7F6F0),
-            background: const Color(0xFFF7F6F0),
-          ),
-          textTheme: const TextTheme(
-            bodyLarge: TextStyle(color: Color(0xFF000000)),
-          ),
+    return MaterialApp(
+      routes: {
+        '/addtrip': (context) => AddTrip(),
+      },
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSwatch().copyWith(
+          secondary: const Color(0xFFF7F6F0),
+          background: const Color(0xFFF7F6F0),
         ),
-        home: const Scaffold(
-          body: Padding(
-            padding: EdgeInsets.only(top: 25),
-            child: TravelMateNavigation(),
-          ),
+        textTheme: const TextTheme(
+          bodyLarge: TextStyle(color: Color(0xFF000000)),
+        ),
+      ),
+      home: const Scaffold(
+        body: Padding(
+          padding: EdgeInsets.only(top: 25),
+          child: TravelMateNavigation(),
         ),
       ),
     );

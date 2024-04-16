@@ -1,0 +1,243 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_card_swiper/flutter_card_swiper.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
+import "package:story_view/story_view.dart";
+import 'package:cached_network_image/cached_network_image.dart';
+
+class PossibleMatches extends StatefulWidget {
+  final Map data;
+
+  const PossibleMatches({required Key key, required this.data})
+      : super(key: key);
+
+  @override
+  State<PossibleMatches> createState() => _PossibleMatchesState();
+}
+
+class _PossibleMatchesState extends State<PossibleMatches> {
+  List<Map<String, dynamic>> travelers = [];
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialiseer de lijst travelers hier
+    initializeTravelersList();
+  }
+
+  void initializeTravelersList() {
+    setState(() {
+      travelers = [
+        // Voorbeeldgegevens
+        {
+          'Id': '1',
+          'Name': 'Traveler 1',
+          'Birthdate': DateTime.now().toString(),
+          'Gender': 'Male',
+          'Bio': 'Lorem ipsum dolor sit amet',
+          'PhotoUrls': [
+            'https://reneeroaming.com/wp-content/uploads/2020/10/What-to-wear-hiking-as-a-woman-cute-hiking-boots-for-women-819x1024.jpg',
+            'https://www.reneeroaming.com/wp-content/uploads/2020/10/What-To-Wear-Hiking-As-A-Woman-Renee-Roaming.jpg'
+          ],
+          'Features': ['Feature 1', 'Feature 2'],
+          'PreferredGender': 'Any',
+          'PreferredMinAge': 18,
+          'PreferredMaxAge': 35,
+          'PreferredDistance': 100,
+        },
+        {
+          'Id': '2',
+          'Name': 'Traveler 2',
+          'Birthdate': DateTime.now().toString(),
+          'Gender': 'Female',
+          'Bio': 'Lorem ipsum dolor sit amet',
+          'PhotoUrls': [
+            'https://reneeroaming.com/wp-content/uploads/2020/10/What-to-wear-hiking-as-a-woman-cute-hiking-boots-for-women-819x1024.jpg',
+            'https://www.reneeroaming.com/wp-content/uploads/2020/10/What-To-Wear-Hiking-As-A-Woman-Renee-Roaming.jpg'
+          ],
+          'Features': ['Feature 1', 'Feature 2'],
+          'PreferredGender': 'Any',
+          'PreferredMinAge': 25,
+          'PreferredMaxAge': 50,
+          'PreferredDistance': 200,
+        },
+        {
+          'Id': '3',
+          'Name': 'Traveler 3',
+          'Birthdate': DateTime.now().toString(),
+          'Gender': 'Other',
+          'Bio': 'Lorem ipsum dolor sit amet',
+          'PhotoUrls': [
+            'https://reneeroaming.com/wp-content/uploads/2020/10/What-to-wear-hiking-as-a-woman-cute-hiking-boots-for-women-819x1024.jpg',
+            'https://www.reneeroaming.com/wp-content/uploads/2020/10/What-To-Wear-Hiking-As-A-Woman-Renee-Roaming.jpg'
+          ],
+          'Features': ['Feature 1', 'Feature 2'],
+          'PreferredGender': 'Any',
+          'PreferredMinAge': 20,
+          'PreferredMaxAge': 40,
+          'PreferredDistance': 150,
+        },
+      ];
+    });
+  }
+
+  int currentIndex = 0;
+
+  bool _onSwipe(int index, int? previousIndex, CardSwiperDirection direction) {
+    setState(() {
+      currentIndex = index + 1;
+      if (currentIndex >= travelers.length) {
+        // Als alle kaarten zijn geswiped, leeg de lijst met kaarten.
+        travelers.clear();
+      }
+
+      if (direction == CardSwiperDirection.right) {
+        print('Kaart geswiped naar rechts');
+      }
+      if (direction == CardSwiperDirection.left) {
+        print('Kaart geswiped naar links');
+      }
+    });
+
+    return true; // Deze waarde geeft aan dat de swipe wordt geaccepteerd.
+  }
+
+  final controller = StoryController();
+
+  @override
+  Widget build(BuildContext context) {
+    List<StoryItem> storyItems = [
+      StoryItem.pageImage(
+          url:
+              'https://reneeroaming.com/wp-content/uploads/2020/10/What-to-wear-hiking-as-a-woman-cute-hiking-boots-for-women-819x1024.jpg',
+          controller: controller),
+      StoryItem.pageImage(
+          url:
+              'https://www.reneeroaming.com/wp-content/uploads/2020/10/What-To-Wear-Hiking-As-A-Woman-Renee-Roaming.jpg',
+          controller: controller),
+    ];
+
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color(0xFFF7F6F0),
+        title: RichText(
+          text: const TextSpan(
+            style: TextStyle(
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF000000),
+            ),
+            children: [
+              TextSpan(
+                text: 'Travel',
+              ),
+              TextSpan(
+                text: 'Mate',
+                style: TextStyle(
+                  color: Color(0xFFFBB03B), // Gele kleur
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      body: travelers.isEmpty
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(
+                    'lib/assets/logo.svg',
+                    width: 250,
+                    height: 250,
+                  ),
+                  const Text(
+                    'Oeps! Geen mogelijke matches meer voor deze trip!',
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: Color(0xFFFBB03B),
+                        fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            )
+          : CardSwiper(
+              cardsCount: travelers.length,
+              cardBuilder:
+                  (context, index, percentThresholdX, percentThresholdY) {
+                // Maak een kaart voor elk object in de lijst 'travelers'
+                return SizedBox(
+                  width: MediaQuery.of(context)
+                      .size
+                      .width, // Breedte instellen op de breedte van het scherm
+                  child: Card(
+                    color: const Color(0xFFFFC161),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: 500,
+                          child: StoryView(
+                            storyItems: storyItems,
+                            onStoryShow: (storyItem, index) =>
+                                print('Showing a story'),
+                            controller: controller, // pass controller here too
+                            repeat: true,
+                            inline: false,
+                            onComplete: () {},
+
+                            // Preferrably for inline story view.
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0, top: 8.0),
+                          child: Text(travelers[index]['Name']!,
+                              style: const TextStyle(
+                                  fontSize: 24, fontWeight: FontWeight.bold)),
+                        ),
+                        Wrap(
+                          spacing: 8.0, // Spacing between the containers
+                          children: travelers[index]['Features'] != null
+                              ? travelers[index]['Features']
+                                  .map<Widget>((feature) {
+                                  return Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0,
+                                      vertical: 2.0,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: const Color(0xFFFBB03B),
+                                        width: 2.0,
+                                      ),
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      color: const Color(0xFFF7F6F0),
+                                    ),
+                                    child: Text(
+                                      feature,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  );
+                                }).toList()
+                              : [const Text('No features listed')],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Text(travelers[index]['Bio'].toString()),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+              onSwipe: _onSwipe,
+            ),
+    );
+  }
+}

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:travelmate/widgets/mytrips/addtrip.dart';
+import 'package:travelmate/widgets/mytrips/onetrip.dart';
 
 class MytripsOverview extends StatefulWidget {
   const MytripsOverview({
@@ -100,7 +101,7 @@ class _MytripsOverviewState extends State<MytripsOverview> {
             ElevatedButton(
               onPressed: () {
                 print('Add button tapped');
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                Navigator.push(context, MaterialPageRoute(builder: (_) {
                   return const AddTrip();
                 }));
               },
@@ -119,53 +120,58 @@ class _MytripsOverviewState extends State<MytripsOverview> {
           ],
         ),
         SingleChildScrollView(
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: data.length,
-            itemBuilder: (context, index) {
-              return GestureDetector(
-                onTap: () {
-                  // Voer hier de logica uit wanneer er op een kaart wordt geklikt
-                  print('Card tapped: ${data[index]['destination']}');
-                },
-                child: Card(
-                  color: const Color(0xFFFFC161),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Container(
-                          height: 100,
-                          width: 200,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.yellow,
+          child: SizedBox(
+            height: 690,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: data.length,
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (_) {
+                      return OneTrip(key: UniqueKey(), data: data[index]);
+                    }));
+                    print('Card tapped: ${data[index]['destination']}');
+                  },
+                  child: Card(
+                    color: const Color(0xFFFFC161),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Container(
+                            height: 100,
+                            width: 200,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.yellow,
+                            ),
                           ),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.only(top: 8.0),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Text('01-01-2022'),
-                              Text(' - '),
-                              Text('01-01-2022'),
-                            ],
+                          const Padding(
+                            padding: EdgeInsets.only(top: 8.0),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text('01-01-2022'),
+                                Text(' - '),
+                                Text('01-01-2022'),
+                              ],
+                            ),
                           ),
-                        ),
-                        Text(
-                          data[index]['destination'],
-                          style: const TextStyle(
-                              fontSize: 24, fontWeight: FontWeight.bold),
-                        ),
-                      ],
+                          Text(
+                            data[index]['destination'],
+                            style: const TextStyle(
+                                fontSize: 24, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
         ),
       ],
