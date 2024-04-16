@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 
 class Explore extends StatefulWidget {
   @override
@@ -8,10 +9,33 @@ class Explore extends StatefulWidget {
 }
 
 class _ExploreState extends State<Explore> {
-  List<Map<String, String>> data = [
-    {'title': 'Titel 1', 'description': 'Beschrijving 1'},
-    {'title': 'Titel 2', 'description': 'Beschrijving 2'},
-    {'title': 'Titel 3', 'description': 'Beschrijving 3'}
+  List<Map> data = [
+    {
+      'destination': 'Destination 1',
+      'startdate': DateTime.now(),
+      'enddate': DateTime.now(),
+      'features': ['Feature 1', 'Feature 2'],
+      'uitleg':
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco ',
+    },
+    {
+      'destination': 'Destination 2',
+      'startdate': DateTime.now(), // Corrected to 'startdate' instead of 'date'
+      'enddate': DateTime.now(), // Corrected to 'enddate' instead of 'date'
+
+      'features': ['Feature 1', 'Feature 2'],
+      'uitleg':
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco ',
+    },
+    {
+      'destination': 'Destination 3',
+      'startdate': DateTime.now(), // Corrected to 'startdate' instead of 'date'
+      'enddate': DateTime.now(), // Corrected to 'enddate' instead of 'date'
+
+      'features': ['Feature 1', 'Feature 2'],
+      'uitleg':
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco ',
+    },
   ];
 
   int currentIndex = 0;
@@ -71,10 +95,53 @@ class _ExploreState extends State<Explore> {
                   child: Card(
                     color: const Color(0xFFFFC161),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(data[index]['title']!), // Titel
-                        Text(data[index]['description']!), // Beschrijving
+                        Container(height: 500, color: Colors.white),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0, top: 8.0),
+                          child: Text(data[index]['destination']!,
+                              style: const TextStyle(
+                                  fontSize: 24, fontWeight: FontWeight.bold)),
+                        ),
+                        Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Text(DateFormat('dd MMMM')
+                                  .format(data[index]['enddate'])),
+                            ),
+                            const Text(' - '),
+                            Text(DateFormat('dd MMMM')
+                                .format(data[index]['enddate'])),
+                          ],
+                        ),
+                        Wrap(
+                          spacing: 8.0, // Spacing between the containers
+                          children:
+                              data[index]['features'].map<Widget>((feature) {
+                            return Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8.0, vertical: 2.0),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: const Color(0xFFFBB03B), width: 2.0),
+                                borderRadius: BorderRadius.circular(10.0),
+                                color: const Color(0xFFF7F6F0),
+                              ),
+                              child: Text(
+                                feature,
+                                style: const TextStyle(
+                                    fontSize: 16, color: Colors.black),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Text(data[index]['uitleg'].toString()),
+                        ),
                       ],
                     ),
                   ),
