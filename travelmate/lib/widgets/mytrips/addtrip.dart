@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:travelmate/provider/AddTripProvider.dart';
+import 'package:travelmate/provider/addtripprovider.dart';
+import 'package:travelmate/routes/travel/mytrips.dart';
+import 'package:travelmate/widgets/addtrip/addtripenddate.dart';
+import 'package:travelmate/widgets/addtrip/addtripstartdate.dart';
 import 'package:travelmate/widgets/addtrip/addtripname.dart';
+import 'package:travelmate/widgets/mytrips/mytripsoverview.dart';
+import 'package:travelmate/widgets/addtrip/addtripfeatures.dart';
+import 'package:travelmate/widgets/addtrip/addtripdescription.dart';
+import 'package:travelmate/widgets/addtrip/addtripphoto.dart';
+import 'package:travelmate/widgets/addtrip/addtripvoorkeuren.dart';
 
 class AddTrip extends StatefulWidget {
   const AddTrip({Key? key}) : super(key: key);
-
-  
 
   @override
   State<AddTrip> createState() => _AddTripState();
@@ -22,70 +28,129 @@ class _AddTripState extends State<AddTrip> {
     super.initState();
     _setupSteps = [
       AddTripName(),
-      // AddTripDates(),
-      // AddTripFeatures(),
-      // AddTripDescription(),
-      // AddTripPhotos(),
-      // AddTripPreferences(),
+      AddTripStartDate(),
+      AddTripEndDate(),
+      AddTripFeatures(),
+      AddTripDescription(),
+      AddTripPhoto(),
+      AddTripPreferences(),
     ];
   }
 
+  double _progressValue = 0.1;
   void _nextStep() {
     setState(() {
       if (_currentStep < _setupSteps.length - 1) {
         _currentStep++;
+        _progressValue = (_currentStep + 1) / _setupSteps.length;
       } else {
-        // Handle save action when all steps are completed
-        _saveData();
+        _submitData();
       }
     });
+  }
+
+  void _submitData() {
+    // print alle data uit de provider
+    print(Provider.of<AddTripData>(context, listen: false).tripname);
+    print(Provider.of<AddTripData>(context, listen: false).startdate);
+    print(Provider.of<AddTripData>(context, listen: false).enddate);
+    print(Provider.of<AddTripData>(context, listen: false).features);
+    print(Provider.of<AddTripData>(context, listen: false).description);
+    print(Provider.of<AddTripData>(context, listen: false).tripname);
+    print(Provider.of<AddTripData>(context, listen: false).leeftijdvoorkeur);
+    print(Provider.of<AddTripData>(context, listen: false).gendervoorkeur);
+    print(Provider.of<AddTripData>(context, listen: false).afstandvoorkeur);
+
+    // Navigeer terug naar de overzichtspagina
+    Navigator.push(context, MaterialPageRoute(builder: (_) => MyTrips()));
   }
 
   void _previousStep() {
     setState(() {
       if (_currentStep > 0) {
         _currentStep--;
+        _progressValue = _currentStep / (_setupSteps.length - 1);
+      } else {
+        // Handle the case when _currentStep is already at its minimum value
+        // For example, you can navigate back to the previous screen
+        Navigator.pop(context);
       }
     });
-  }
-
-  void _saveData() {
-    // Implement logic to save trip data
-    // This could involve sending data to a database or performing local storage
-    // After saving, you might navigate back or display a success message
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Add Trip'),
-      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           LinearProgressIndicator(
-            value: (_currentStep + 1) / _setupSteps.length,
+            //hoogte van de voortgangsbalk
+            minHeight: 15.0,
+            //hoeken afronden
+            borderRadius: const BorderRadius.only(
+                topRight: Radius.circular(10.0),
+                bottomRight: Radius.circular(10.0)),
+            value: _progressValue, // Voortgangswaarde
+            backgroundColor: const Color(0xFFF7F6F0), // Achtergrondkleur
+            valueColor: const AlwaysStoppedAnimation<Color>(
+                Color(0xFFFBB03B)), // Voortgangskleur
           ),
-          Expanded(
-            child: _setupSteps[_currentStep],
-          ),
+          // terugknop
           Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            padding: const EdgeInsets.only(top: 0, left: 0, bottom: 0),
+            child: Column(
               children: [
-                if (_currentStep > 0)
-                  ElevatedButton(
-                    onPressed: _previousStep,
-                    child: Text('Previous'),
+                TextButton(
+                  onPressed: () {
+                    if (_currentStep > 0) {
+                      _previousStep();
+                    } else {
+                      Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (_) => MyTrips()));
+                    }
+                  },
+                  child: const Text(
+                    'Terug',
+                    style: TextStyle(fontSize: 20, color: Color(0xFFFBB03B)),
                   ),
-                ElevatedButton(
-                  onPressed: _nextStep,
-                  child: Text(
-                      _currentStep == _setupSteps.length - 1 ? 'Save' : 'Next'),
                 ),
               ],
+            ),
+          ),
+
+          _setupSteps[_currentStep],
+          Padding(
+            padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: ElevatedButton(
+                onPressed:
+                    _nextStep, // Veranderde onPressed om naar de volgende stap te gaan
+                style: ElevatedButton.styleFrom(
+                  side: const BorderSide(
+                      color: Color(0xFFFBB03B), width: 2.0), // Rand
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10), // Afgeronde hoeken
+                  ),
+                ),
+
+                child: Container(
+                  width: double.infinity, // Volledige breedte
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 12.0), // Aangepaste padding
+                  child: Text(
+                    _currentStep == _setupSteps.length - 1
+                        ? 'Opslaan'
+                        : 'Volgende', // Tekst van de knop
+                    textAlign:
+                        TextAlign.center, // Tekst centreren binnen de knop
+                    style: const TextStyle(
+                        fontSize: 20, color: Color(0xFF000000) // Tekstgrootte
+                        ),
+                  ),
+                ),
+              ),
             ),
           ),
         ],

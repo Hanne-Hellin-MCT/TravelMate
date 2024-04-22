@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-class AddTripData extends ChangeNotifier {
+class AddTripData with ChangeNotifier {
   String destination = '';
-  DateTime startdate = DateTime.now();
-  DateTime enddate = DateTime.now();
+  String startdate = '';
+  String enddate = '';
   List<String> features = [];
   String description = '';
   //fotos
@@ -17,12 +17,12 @@ class AddTripData extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setStartdate(DateTime newStartdate) {
+  void setStartdate(String newStartdate) {
     startdate = newStartdate;
     notifyListeners();
   }
 
-  void setEnddate(DateTime newEnddate) {
+  void setEnddate(String newEnddate) {
     enddate = newEnddate;
     notifyListeners();
   }
@@ -41,7 +41,6 @@ class AddTripData extends ChangeNotifier {
     description = newDescription;
     notifyListeners();
   }
-
 
   void setTripname(String newTripname) {
     tripname = newTripname;
@@ -83,11 +82,11 @@ class AddTripData extends ChangeNotifier {
     return destination;
   }
 
-  DateTime getStartdate() {
+  String getStartdate() {
     return startdate;
   }
 
-  DateTime getEnddate() {
+  String getEnddate() {
     return enddate;
   }
 

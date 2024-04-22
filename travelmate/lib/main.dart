@@ -6,28 +6,27 @@ import 'package:travelmate/routes/setupaccount/setupaccount.dart';
 import 'package:travelmate/routes/travel/travelnavigationbar.dart';
 import 'package:travelmate/routes/travel/mytrips.dart';
 import 'package:travelmate/widgets/mytrips/addtrip.dart';
-import 'package:travelmate/provider/AddTripProvider.dart';
+import 'package:travelmate/provider/addtripprovider.dart';
 
 void main() {
-  runApp(const MainApp());
-  MultiProvider(
+  runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => SetupAccountData()),
       ChangeNotifierProvider(create: (_) => AddTripData()),
     ],
     child: const MainApp(),
-  );
+  ));
 }
 
 class MainApp extends StatelessWidget {
-  const MainApp({Key? key}) : super(key: key);
+  const MainApp({super.key});
 
   @override
   Widget build(BuildContext context) {
+    print('Provider addtripdata main');
+    print(Provider.of<AddTripData>(context).tripname);
+
     return MaterialApp(
-      routes: {
-        '/addtrip': (context) => AddTrip(),
-      },
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSwatch().copyWith(

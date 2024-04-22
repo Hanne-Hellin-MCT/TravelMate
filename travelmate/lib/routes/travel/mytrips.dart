@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:travelmate/provider/addtripprovider.dart';
 import 'package:travelmate/widgets/mytrips/mytripsoverview.dart';
 
 class MyTrips extends StatelessWidget {
@@ -8,10 +10,7 @@ class MyTrips extends StatelessWidget {
       body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
-            children: [
-             
-              MytripsOverview()
-            ],
+            children: [MytripsOverview()],
           )),
     );
   }

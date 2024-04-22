@@ -182,10 +182,13 @@ class _PossibleMatchesState extends State<PossibleMatches> {
                           height: 500,
                           child: StoryView(
                             storyItems: storyItems,
+                            progressPosition: ProgressPosition.top,
+                            // dont go automatically to the next page
+                            repeat: true,
                             onStoryShow: (storyItem, index) =>
                                 print('Showing a story'),
                             controller: controller, // pass controller here too
-                            repeat: true,
+
                             inline: false,
                             onComplete: () {},
 

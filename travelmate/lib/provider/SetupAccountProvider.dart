@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class SetupAccountData extends ChangeNotifier {
+class SetupAccountData with ChangeNotifier {
   String name = '';
   String birthdate = '';
   String gender = '';

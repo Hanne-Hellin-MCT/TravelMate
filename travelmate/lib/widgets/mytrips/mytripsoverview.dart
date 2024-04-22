@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
+import 'package:travelmate/provider/addtripprovider.dart';
 import 'package:travelmate/widgets/mytrips/addtrip.dart';
 import 'package:travelmate/widgets/mytrips/onetrip.dart';
 
@@ -72,6 +74,7 @@ class _MytripsOverviewState extends State<MytripsOverview> {
 
   @override
   Widget build(BuildContext context) {
+   
     return Column(
       children: [
         Row(

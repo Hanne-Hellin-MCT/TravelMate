@@ -2,15 +2,35 @@ import 'package:flutter/material.dart';
 import 'package:travelmate/provider/addtripprovider.dart';
 import 'package:provider/provider.dart';
 
-class AddTripName extends StatelessWidget {
+class AddTripName extends StatefulWidget {
   const AddTripName({
     super.key,
   });
 
   @override
-  Widget build(BuildContext context) {
-    String currentName = Provider.of<AddTripData>(context).tripname ?? '';
+  State<AddTripName> createState() => _AddTripNameState();
+}
 
+class _AddTripNameState extends State<AddTripName> {
+  late TextEditingController _nameController;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the controller with the current name
+    _nameController = TextEditingController(
+        text: Provider.of<AddTripData>(context, listen: false).tripname ?? '');
+  }
+
+  @override
+  void dispose() {
+    // Dispose the controller when the widget is disposed
+    _nameController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -56,7 +76,7 @@ class AddTripName extends StatelessWidget {
                 borderSide: BorderSide(color: Color(0xFFFBB03B), width: 1.0),
               ),
             ),
-            controller: TextEditingController(text: currentName),
+            controller: _nameController,
             onChanged: (newName) {
               Provider.of<AddTripData>(context, listen: false)
                   .setTripname(newName);
