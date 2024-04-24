@@ -17,6 +17,9 @@ dependencies:
   flutter_card_swiper: ^7.0.0
   story_view: ^0.16.5
   cached_network_image: ^3.3.1
+  cloud_firestore: ^4.15.9
+  firebase_auth: ^4.17.9
+  firebase_core: ^2.27.1
 
 dev_dependencies:
   flutter_test:

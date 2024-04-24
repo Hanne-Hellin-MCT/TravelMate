@@ -7,8 +7,14 @@ import 'package:travelmate/routes/travel/travelnavigationbar.dart';
 import 'package:travelmate/routes/travel/mytrips.dart';
 import 'package:travelmate/widgets/mytrips/addtrip.dart';
 import 'package:travelmate/provider/addtripprovider.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => SetupAccountData()),
@@ -40,7 +46,7 @@ class MainApp extends StatelessWidget {
       home: const Scaffold(
         body: Padding(
           padding: EdgeInsets.only(top: 25),
-          child: TravelMateNavigation(),
+          child: Credentials(),
         ),
       ),
     );

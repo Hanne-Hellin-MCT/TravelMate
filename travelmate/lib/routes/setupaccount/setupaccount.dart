@@ -9,6 +9,7 @@ import 'package:travelmate/widgets/setupaccount/setupaccountbio.dart';
 import 'package:travelmate/widgets/setupaccount/setupaccountvoorkeuren.dart';
 import 'package:travelmate/provider/SetupAccountProvider.dart';
 import 'package:provider/provider.dart';
+import 'package:travelmate/routes/travel/travelnavigationbar.dart';
 
 class SetupAccount extends StatefulWidget {
   const SetupAccount({Key? key}) : super(key: key);
@@ -51,9 +52,19 @@ class _SetupAccountState extends State<SetupAccount> {
         print('interests: $interests');
         print('voorkeuren: $voorkeuren');
 
-        // _submitData();
+        _submitData();
       }
     });
+  }
+
+  void _submitData() {
+    // Verstuur de data naar de server
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TravelMateNavigation(),
+      ),
+    );
   }
 
   @override
@@ -108,8 +119,8 @@ class _SetupAccountState extends State<SetupAccount> {
             child: Align(
               alignment: Alignment.bottomCenter,
               child: ElevatedButton(
-                onPressed:
-                    _nextStep, // Veranderde onPressed om naar de volgende stap te gaan
+                onPressed: _nextStep,
+                // Veranderde onPressed om naar de volgende stap te gaan
                 style: ElevatedButton.styleFrom(
                   side: const BorderSide(
                       color: Color(0xFFFBB03B), width: 2.0), // Rand

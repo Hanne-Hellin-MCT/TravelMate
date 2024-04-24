@@ -1,9 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:travelmate/routes/travel/travelnavigationbar.dart';
+import 'package:travelmate/widgets/forgetpassword.dart';
+import 'package:travelmate/widgets/createaccount.dart';
 
-class signinwithemail extends StatelessWidget {
+class signinwithemail extends StatefulWidget {
   const signinwithemail({
     super.key,
   });
+
+  @override
+  State<signinwithemail> createState() => _signinwithemailState();
+}
+
+class _signinwithemailState extends State<signinwithemail> {
+  String email = '';
+  String password = '';
+
+  void login() async {
+    if (email.isNotEmpty || password.isNotEmpty) {
+      print('Email: $email');
+      print('Password: $password');
+    }
+    try {
+      final credential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
+      if (credential.user != null) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => TravelMateNavigation(),
+          ),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        print('No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        print('Wrong password provided for that user.');
+      } else {
+        print('Error: $e');
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Positioned(
@@ -20,6 +60,11 @@ class signinwithemail extends StatelessWidget {
             children: [
               const SizedBox(height: 70.0),
               TextField(
+                onChanged: (value) {
+                  setState(() {
+                    email = value;
+                  });
+                },
                 decoration: InputDecoration(
                   labelText: 'Email',
                   border: OutlineInputBorder(
@@ -37,6 +82,11 @@ class signinwithemail extends StatelessWidget {
               ),
               const SizedBox(height: 20.0),
               TextField(
+                onChanged: (value) {
+                  setState(() {
+                    password = value;
+                  });
+                },
                 obscureText: true,
                 decoration: InputDecoration(
                   labelText: 'Password',
@@ -55,7 +105,10 @@ class signinwithemail extends StatelessWidget {
               ),
               const SizedBox(height: 20.0),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  print('Login button pressed');
+                  login();
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFFBB03B),
                   textStyle: const TextStyle(
@@ -68,11 +121,45 @@ class signinwithemail extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                 ),
-                child: const Text('Log in'),
+                child: const Text(
+                  'Log in',
+                  style: TextStyle(fontSize: 20, color: Colors.white),
+                ),
               ),
               const SizedBox(height: 10.0),
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  print("wachtwoord vergeten");
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ForgetPassword(),
+                    ),
+                  );
+                },
+                child: const Center(
+                  child: Text(
+                    'Wachtwoord vergeten?',
+                    style: TextStyle(
+                      fontSize: 12.0,
+                      color: Color(0xFFFBB03B), // Gele kleur
+                      decoration: TextDecoration.underline, // Onderlijnde tekst
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10.0),
+              GestureDetector(
+                onTap: () {
+                  //navigate to create account
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CreateAccount(),
+                    ),
+                  );
+                  print("nog geen account");
+                },
                 child: const Center(
                   child: Text(
                     'Nog geen account?',

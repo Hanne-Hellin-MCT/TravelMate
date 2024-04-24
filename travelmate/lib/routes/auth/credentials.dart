@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:travelmate/routes/travel/travelnavigationbar.dart';
 import 'package:travelmate/widgets/signinbuttons.dart';
 import 'package:travelmate/widgets/signinwithemail.dart';
+import 'package:travelmate/widgets/forgetpassword.dart';
 
 class Credentials extends StatefulWidget {
   const Credentials({Key? key}) : super(key: key);
@@ -11,36 +14,6 @@ class Credentials extends StatefulWidget {
 }
 
 class _CredentialsState extends State<Credentials> {
-  String email = '';
-  String password = '';
-
-  // void login() async {
-  //   if (email.isNotEmpty || password.isNotEmpty) {
-  //     print('Email: $email');
-  //     print('Password: $password');
-  //   }
-  //   try {
-  //     final credential = await FirebaseAuth.instance
-  //         .signInWithEmailAndPassword(email: email, password: password);
-  //     if (credential.user != null) {
-  //       Navigator.pushReplacement(
-  //         context,
-  //         MaterialPageRoute(
-  //           builder: (context) => NoteOverviewNavigation(),
-  //         ),
-  //       );
-  //     }
-  //   } on FirebaseAuthException catch (e) {
-  //     if (e.code == 'user-not-found') {
-  //       print('No user found for that email.');
-  //     } else if (e.code == 'wrong-password') {
-  //       print('Wrong password provided for that user.');
-  //     } else {
-  //       print('Error: $e');
-  //     }
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:provider/provider.dart';
+import 'package:travelmate/provider/SetupAccountProvider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:travelmate/routes/auth/credentials.dart';
 
 class Settings extends StatefulWidget {
   @override
@@ -49,13 +53,23 @@ class _SettingsState extends State<Settings> {
     });
   }
 
+  void signout() async {
+    await FirebaseAuth.instance.signOut();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => Credentials(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.only(top: 50),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+        padding: const EdgeInsets.only(top: 50, left: 30, right: 30),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -66,13 +80,14 @@ class _SettingsState extends State<Settings> {
                     style: const TextStyle(
                         fontSize: 30, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 10.0),
-                const Padding(
-                  padding: EdgeInsets.only(left: 20, top: 20),
-                  child: Text(
-                    'Gender:',
-                    style: TextStyle(fontSize: 20, color: Color(0xFF000000)),
-                    textAlign: TextAlign.start,
-                  ),
+              ],
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Gender:',
+                  style: TextStyle(fontSize: 20, color: Color(0xFF000000)),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
@@ -106,7 +121,86 @@ class _SettingsState extends State<Settings> {
                     }).toList(),
                   ),
                 ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 20,
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Leeftijd:',
+                            style: TextStyle(
+                                fontSize: 20, color: Color(0xFF000000)),
+                            textAlign: TextAlign.start,
+                          ),
+                          Text(
+                            ' ${_startValue.toStringAsFixed(_startValue.truncateToDouble() == _startValue ? 0 : 2)} - ${_endValue.toStringAsFixed(_endValue.truncateToDouble() == _endValue ? 0 : 2)}',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Color(0xFF6B6B6B),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SliderTheme(
+                        data: SliderTheme.of(context).copyWith(
+                          activeTrackColor: const Color(0xFFFBB03B),
+                          inactiveTrackColor: Colors.grey,
+                          thumbColor: const Color(0xFFFBB03B),
+                          overlayColor: const Color(0xFFFBB03B)
+                              .withAlpha(32), // Kleur van het overlayeffect
+                          valueIndicatorColor: const Color(
+                              0xFFFBB03B), // Kleur van het waarde-indicatorlabel
+                          // En andere eigenschappen zoals:
+                          // thumbShape, overlayShape, tickMarkShape, valueIndicatorShape, etc.
+                        ),
+                        child: RangeSlider(
+                          values: RangeValues(_startValue, _endValue),
+                          onChanged: (RangeValues values) {
+                            _updateValues(values.start, values.end);
+                          },
+                          min: 18,
+                          max: 100,
+                          divisions:
+                              82, // Aantal tussenliggende waarden (100 - 18 = 82)
+                          labels: RangeLabels(
+                            _startValue.toStringAsFixed(0),
+                            _endValue.toStringAsFixed(0),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
+            ),
+            const SizedBox(height: 20.0),
+            //button voor uit te loggen
+            ElevatedButton(
+              onPressed: () {
+                signout();
+                print('Sign out');
+                //show errortext that email is send
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFBB03B),
+                textStyle: const TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.normal,
+                  color: Colors.white, // Witte tekstkleur
+                ),
+                minimumSize: const Size(300, 50),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+              ),
+              child: const Text(
+                'Sign out',
+                style: TextStyle(fontSize: 20, color: Colors.white),
+              ),
             ),
           ],
         ),

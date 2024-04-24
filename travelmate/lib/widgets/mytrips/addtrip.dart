@@ -11,6 +11,7 @@ import 'package:travelmate/widgets/addtrip/addtripfeatures.dart';
 import 'package:travelmate/widgets/addtrip/addtripdescription.dart';
 import 'package:travelmate/widgets/addtrip/addtripphoto.dart';
 import 'package:travelmate/widgets/addtrip/addtripvoorkeuren.dart';
+import 'package:travelmate/routes/travel/travelnavigationbar.dart';
 
 class AddTrip extends StatefulWidget {
   const AddTrip({Key? key}) : super(key: key);
@@ -106,8 +107,10 @@ class _AddTripState extends State<AddTrip> {
                     if (_currentStep > 0) {
                       _previousStep();
                     } else {
-                      Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (_) => MyTrips()));
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => TravelMateNavigation()));
                     }
                   },
                   child: const Text(
