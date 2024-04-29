@@ -56,20 +56,11 @@ class _ExploreState extends State<Explore> {
   }
 
   int currentIndex = 0;
-
   Future<bool> _onSwipe(
       int index, int? previousIndex, CardSwiperDirection direction) async {
     if (currentIndex >= fetchdata.length) {
       return false;
     }
-
-    setState(() {
-      currentIndex = index + 1;
-      if (currentIndex >= fetchdata.length) {
-        // Als alle kaarten zijn geswiped, leeg de lijst met kaarten.
-        fetchdata.clear();
-      }
-    });
 
     if (direction == CardSwiperDirection.right) {
       print('Kaart geswiped naar rechts');
@@ -133,6 +124,14 @@ class _ExploreState extends State<Explore> {
         print('Error adding userinteraction');
       }
     }
+
+    setState(() {
+      currentIndex = index + 1;
+      if (currentIndex >= fetchdata.length) {
+        // Als alle kaarten zijn geswiped, leeg de lijst met kaarten.
+        fetchdata.clear();
+      }
+    });
 
     return true; // Deze waarde geeft aan dat de swipe wordt geaccepteerd.
   }
@@ -225,11 +224,11 @@ class _ExploreState extends State<Explore> {
                           ),
                           Wrap(
                             spacing: 8.0, // Spacing between the containers
-                            children: (fetchdata[index]['features']
-                                    as List<dynamic>)
-                                .take(3)
-                                .toList()
-                                .map<Widget>((feature) {
+                            children:
+                                (fetchdata[index]['features'] as List<dynamic>)
+                                    .take(3)
+                                    .toList()
+                                    .map<Widget>((feature) {
                               return Container(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 8.0, vertical: 2.0),

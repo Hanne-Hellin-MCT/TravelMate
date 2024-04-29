@@ -26,65 +26,6 @@ class _PossibleMatchesState extends State<PossibleMatches> {
     super.initState();
     // Riep fetchTravelers aan om reisgegevens op te halen
     fetchTravelers();
-
-    // Initialiseer de lijst travelers hier
-    // initializeTravelersList();
-  }
-
-  void initializeTravelersList() {
-    setState(() {
-      travelers = [
-        // Voorbeeldgegevens
-        {
-          'Id': '1',
-          'Name': 'Traveler 1',
-          'Birthdate': DateTime.now().toString(),
-          'Gender': 'Male',
-          'Bio': 'Lorem ipsum dolor sit amet',
-          'PhotoUrls': [
-            'https://reneeroaming.com/wp-content/uploads/2020/10/What-to-wear-hiking-as-a-woman-cute-hiking-boots-for-women-819x1024.jpg',
-            'https://www.reneeroaming.com/wp-content/uploads/2020/10/What-To-Wear-Hiking-As-A-Woman-Renee-Roaming.jpg'
-          ],
-          'Features': ['Feature 1', 'Feature 2'],
-          'PreferredGender': 'Any',
-          'PreferredMinAge': 18,
-          'PreferredMaxAge': 35,
-          'PreferredDistance': 100,
-        },
-        {
-          'Id': '2',
-          'Name': 'Traveler 2',
-          'Birthdate': DateTime.now().toString(),
-          'Gender': 'Female',
-          'Bio': 'Lorem ipsum dolor sit amet',
-          'PhotoUrls': [
-            'https://reneeroaming.com/wp-content/uploads/2020/10/What-to-wear-hiking-as-a-woman-cute-hiking-boots-for-women-819x1024.jpg',
-            'https://www.reneeroaming.com/wp-content/uploads/2020/10/What-To-Wear-Hiking-As-A-Woman-Renee-Roaming.jpg'
-          ],
-          'Features': ['Feature 1', 'Feature 2'],
-          'PreferredGender': 'Any',
-          'PreferredMinAge': 25,
-          'PreferredMaxAge': 50,
-          'PreferredDistance': 200,
-        },
-        {
-          'Id': '3',
-          'Name': 'Traveler 3',
-          'Birthdate': DateTime.now().toString(),
-          'Gender': 'Other',
-          'Bio': 'Lorem ipsum dolor sit amet',
-          'PhotoUrls': [
-            'https://reneeroaming.com/wp-content/uploads/2020/10/What-to-wear-hiking-as-a-woman-cute-hiking-boots-for-women-819x1024.jpg',
-            'https://www.reneeroaming.com/wp-content/uploads/2020/10/What-To-Wear-Hiking-As-A-Woman-Renee-Roaming.jpg'
-          ],
-          'Features': ['Feature 1', 'Feature 2'],
-          'PreferredGender': 'Any',
-          'PreferredMinAge': 20,
-          'PreferredMaxAge': 40,
-          'PreferredDistance': 150,
-        },
-      ];
-    });
   }
 
   // fetch data from the backend
@@ -129,9 +70,10 @@ class _PossibleMatchesState extends State<PossibleMatches> {
         final travelerid = travelers[index]['id'];
         final tripid = widget.data['id'];
         // Voeg de match toe aan de database
-        final url = 'http://userinteractions/accept/${travelerid}/${tripid}';
+        final url =
+            'http://10.0.2.2:5092/userinteractions/accept/${travelerid}/${tripid}';
 
-        http.post(Uri.parse(url)).then((response) {
+        http.put(Uri.parse(url)).then((response) {
           print('Response status: ${response.statusCode}');
           print('Response body: ${response.body}');
         });
@@ -141,9 +83,10 @@ class _PossibleMatchesState extends State<PossibleMatches> {
         final travelerid = travelers[index]['id'];
         final tripid = widget.data['id'];
         // Voeg de match toe aan de database
-        final url = 'http://userinteractions/decline/${travelerid}/${tripid}';
+        final url =
+            'http://10.0.2.2:5092/userinteractions/decline/${travelerid}/${tripid}';
 
-        http.post(Uri.parse(url)).then((response) {
+        http.put(Uri.parse(url)).then((response) {
           print('Response status: ${response.statusCode}');
           print('Response body: ${response.body}');
         });
@@ -206,11 +149,8 @@ class _PossibleMatchesState extends State<PossibleMatches> {
               cardsCount: travelers.length,
               cardBuilder:
                   (context, index, percentThresholdX, percentThresholdY) {
-                // Maak een kaart voor elk object in de lijst 'travelers'
                 return SizedBox(
-                  width: MediaQuery.of(context)
-                      .size
-                      .width, // Breedte instellen op de breedte van het scherm
+                  width: MediaQuery.of(context).size.width,
                   child: Card(
                     color: const Color(0xFFFFC161),
                     child: Column(
@@ -232,10 +172,8 @@ class _PossibleMatchesState extends State<PossibleMatches> {
                             onStoryShow: (storyItem, index) =>
                                 print('Showing a story'),
                             controller: controller, // pass controller here too
-
                             inline: false,
                             onComplete: () {},
-
                             // Preferrably for inline story view.
                           ),
                         ),

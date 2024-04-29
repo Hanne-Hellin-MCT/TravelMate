@@ -58,7 +58,7 @@ class _SettingsState extends State<Settings> {
 
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.only(top: 50, left: 30, right: 30),
+        padding: const EdgeInsets.only(top: 50, left: 50, right: 0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
