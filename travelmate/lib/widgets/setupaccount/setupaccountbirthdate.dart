@@ -15,19 +15,23 @@ class SetupAccountBirthdate extends StatefulWidget {
 class _SetupAccountBirthdateState extends State<SetupAccountBirthdate> {
   DateTime? _selectedDate;
   TextEditingController _dateController = TextEditingController();
-
   @override
   void initState() {
     super.initState();
     // Haal de geboortedatum op als een string uit de provider
-    String? birthdateString =
+    DateTime birthdateString =
         Provider.of<SetupAccountData>(context, listen: false).birthdate;
     // Converteer de string naar een DateTime object
-    _selectedDate = _parseBirthdate(birthdateString);
+    _selectedDate = birthdateString;
     // Stel de controller in met de geconverteerde datum
     _dateController.text = _selectedDate != null
         ? DateFormat('dd-MM-yyyy').format(_selectedDate!)
         : 'Selecteer een datum';
+
+    // Als de _selectedDate nog niet is ingesteld, initialiseer het met de huidige datum
+    if (_selectedDate == null) {
+      _selectedDate = DateTime.now();
+    }
   }
 
   DateTime? _parseBirthdate(String? birthdateString) {
@@ -52,10 +56,10 @@ class _SetupAccountBirthdateState extends State<SetupAccountBirthdate> {
       setState(() {
         _selectedDate = picked;
       });
-      String formattedDate = DateFormat('dd-MM-yyyy').format(_selectedDate!);
+      // Stel de geformatteerde datum in op de controller
+      _dateController.text = DateFormat('dd-MM-yyyy').format(_selectedDate!);
       // Stel de geformatteerde datum in op de provider
-      // ignore: use_build_context_synchronously
-      context.read<SetupAccountData>().setBirthdate(formattedDate);
+      context.read<SetupAccountData>().setBirthdate(_selectedDate!);
     }
   }
 

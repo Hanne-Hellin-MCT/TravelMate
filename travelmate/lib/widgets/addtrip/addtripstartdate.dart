@@ -20,15 +20,14 @@ class _AddTripStartDateState extends State<AddTripStartDate> {
   @override
   void initState() {
     super.initState();
-    // Haal de geboortedatum op als een string uit de provider
-    String? StartdateString =
-        Provider.of<AddTripData>(context, listen: false).startdate;
-    // Converteer de string naar een DateTime object
-    _selectedDate = _parsedate(StartdateString);
-    // Stel de controller in met de geconverteerde datum
-    _dateController.text = _selectedDate != null
-        ? DateFormat('dd-MM-yyyy').format(_selectedDate!)
-        : 'Selecteer een datum';
+    Future.delayed(Duration.zero, () {
+      String? startdateString =
+          Provider.of<AddTripData>(context, listen: false).startdate.toString();
+      _selectedDate = _parsedate(startdateString);
+      _dateController.text = _selectedDate != null
+          ? DateFormat('dd-MM-yyyy').format(_selectedDate!)
+          : 'Selecteer een datum';
+    });
   }
 
   DateTime? _parsedate(String? StartdateString) {
@@ -55,8 +54,10 @@ class _AddTripStartDateState extends State<AddTripStartDate> {
       });
       String formattedDate = DateFormat('dd-MM-yyyy').format(_selectedDate!);
       // Stel de geformatteerde datum in op de provider
+      Provider.of<AddTripData>(context, listen: false).setStartdate(
+          DateFormat('dd-MM-yyyy').parse(formattedDate) as DateTime);
       // ignore: use_build_context_synchronously
-      context.read<AddTripData>().setStartdate(formattedDate);
+      context.read<AddTripData>().setStartdate(formattedDate as DateTime);
     }
   }
 

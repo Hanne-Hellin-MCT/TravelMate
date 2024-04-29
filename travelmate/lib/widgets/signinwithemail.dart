@@ -3,6 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:travelmate/routes/travel/travelnavigationbar.dart';
 import 'package:travelmate/widgets/forgetpassword.dart';
 import 'package:travelmate/widgets/createaccount.dart';
+import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+import 'package:travelmate/provider/SetupAccountProvider.dart';
+import 'dart:convert';
 
 class signinwithemail extends StatefulWidget {
   const signinwithemail({
@@ -16,31 +20,100 @@ class signinwithemail extends StatefulWidget {
 class _signinwithemailState extends State<signinwithemail> {
   String email = '';
   String password = '';
-
   void login() async {
-    if (email.isNotEmpty || password.isNotEmpty) {
+    if (email.isNotEmpty && password.isNotEmpty) {
       print('Email: $email');
       print('Password: $password');
-    }
-    try {
-      final credential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: password);
-      if (credential.user != null) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => TravelMateNavigation(),
-          ),
+
+      try {
+        final FirebaseAuth _auth = FirebaseAuth.instance;
+        final credential = await _auth.signInWithEmailAndPassword(
+          email: email,
+          password: password,
         );
+
+        if (credential.user != null) {
+          final token = await _auth.currentUser!.getIdToken();
+          print('Token: $token');
+
+          final url = 'http://10.0.2.2:5092/auth/login';
+          final body = {'idToken': token};
+          print('Sending token to backend: $body');
+          final response = await http.post(
+            Uri.parse(url),
+            body: body,
+          );
+
+          if (response.statusCode == 200) {
+            print('Token successfully sent to backend');
+            print(response.body);
+            // haal alle data op van de user
+            GetTravelerData(response.body);
+
+            // Navigate to the next screen upon successful authentication
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => TravelMateNavigation(),
+              ),
+            );
+          } else {
+            print('Error sending token to backend: ${response.statusCode}');
+          }
+        } else {
+          print('User authentication failed.');
+        }
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'user-not-found') {
+          print('No user found for that email.');
+        } else if (e.code == 'wrong-password') {
+          print('Wrong password provided for that user.');
+        } else {
+          print('Error: $e');
+        }
       }
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        print('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
-      } else {
-        print('Error: $e');
+    } else {
+      print('Email or password is empty.');
+    }
+  }
+
+  void GetTravelerData(uid) async {
+    // haal " " weg van uid
+    uid = uid.replaceAll('"', '');
+    final url = 'http://10.0.2.2:5092/travelers/$uid';
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      print('Traveler data successfully retrieved');
+      print(response.body);
+
+      // put data in provider
+      final provider = Provider.of<SetupAccountData>(context, listen: false);
+      final data = jsonDecode(response.body);
+      for (var foto in data['photoUrls']) {
+        provider.fotosurls.add(foto);
       }
+      provider.setName(data['name']);
+      provider.setIdToken(data['id']);
+      print("id: ${data['id']}");
+      provider.setGendervoorkeur(data['preferredGender']);
+      print('voorkeursgender ${data['preferredGender']}');
+      //set birthdate
+      provider.setBirthdate(DateTime.parse(data['birthdate']));
+      provider.setGender(data['gender']);
+      provider.setBio(data['bio']);
+
+      provider.setAfstandvoorkeur(data['preferredDistance']);
+      provider.minleeftijdvoorkeur = data['preferredMinAge'];
+      provider.maxleeftijdvoorkeur = data['preferredMaxAge'];
+      // fotos
+
+      for (var interest in data['interests']) {
+        provider.addInterest(interest);
+      }
+      print('Provider data: ${provider.name}');
+      print('fotos ${provider.fotosurls}');
+    } else {
+      print('Error retrieving traveler data: ${response.statusCode}');
     }
   }
 
@@ -65,6 +138,8 @@ class _signinwithemailState extends State<signinwithemail> {
                     email = value;
                   });
                 },
+                // set value standaard op hanne.hellin2004@gmail.com
+
                 decoration: InputDecoration(
                   labelText: 'Email',
                   border: OutlineInputBorder(

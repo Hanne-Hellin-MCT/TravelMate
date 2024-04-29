@@ -1,10 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:travelmate/provider/addtripprovider.dart';
+import 'package:travelmate/provider/SetupAccountProvider.dart';
 import 'package:travelmate/widgets/mytrips/addtrip.dart';
 import 'package:travelmate/widgets/mytrips/onetrip.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class MytripsOverview extends StatefulWidget {
   const MytripsOverview({
@@ -16,65 +19,42 @@ class MytripsOverview extends StatefulWidget {
 }
 
 class _MytripsOverviewState extends State<MytripsOverview> {
-  List<Map> data = [
-    {
-      'destination': 'Destination 1',
-      'startdate': DateTime.now(),
-      'enddate': DateTime.now(),
-      'features': ['Feature 1', 'Feature 2'],
-      'uitleg':
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco ',
-    },
-    {
-      'destination': 'Destination 2',
-      'startdate': DateTime.now(), // Corrected to 'startdate' instead of 'date'
-      'enddate': DateTime.now(), // Corrected to 'enddate' instead of 'date'
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
 
-      'features': ['Feature 1', 'Feature 2'],
-      'uitleg':
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco ',
-    },
-    {
-      'destination': 'Destination 3',
-      'startdate': DateTime.now(), // Corrected to 'startdate' instead of 'date'
-      'enddate': DateTime.now(), // Corrected to 'enddate' instead of 'date'
+  List<Map> fetchdata = []; // Initialize data as an empty list
 
-      'features': ['Feature 1', 'Feature 2'],
-      'uitleg':
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco ',
-    },
-    {
-      'destination': 'Destination 3',
-      'startdate': DateTime.now(), // Corrected to 'startdate' instead of 'date'
-      'enddate': DateTime.now(), // Corrected to 'enddate' instead of 'date'
-
-      'features': ['Feature 1', 'Feature 2'],
-      'uitleg':
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco ',
-    },
-    {
-      'destination': 'Destination 4',
-      'startdate': DateTime.now(), // Corrected to 'startdate' instead of 'date'
-      'enddate': DateTime.now(), // Corrected to 'enddate' instead of 'date'
-
-      'features': ['Feature 1', 'Feature 2'],
-      'uitleg':
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco ',
-    },
-    {
-      'destination': 'Destination 5',
-      'startdate': DateTime.now(), // Corrected to 'startdate' instead of 'date'
-      'enddate': DateTime.now(), // Corrected to 'enddate' instead of 'date'
-
-      'features': ['Feature 1', 'Feature 2'],
-      'uitleg':
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco ',
-    },
-  ];
+  //
+  Future<void> fetchData() async {
+    final provider = Provider.of<SetupAccountData>(context, listen: false);
+    print("idtokenjklhklj: ${provider.getIdToken()}");
+    final url = 'http://10.0.2.2:5092/trips/tripsfrom/${provider.getIdToken()}';
+    try {
+      final response = await http.get(Uri.parse(url));
+      print('Response status: ${response.statusCode}');
+      if (response.statusCode == 200) {
+        final List<dynamic> jsonData = jsonDecode(response.body);
+        setState(() {
+          // Update the data list with the fetched data
+          fetchdata =
+              jsonData.map((item) => Map<String, dynamic>.from(item)).toList();
+        });
+        print('Data fetched: $fetchdata');
+      } else {
+        // If the server returns an error response, throw an exception
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      // Handle any errors that occur during the fetch operation
+      print('Error fetching data: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-   
     return Column(
       children: [
         Row(
@@ -127,14 +107,14 @@ class _MytripsOverviewState extends State<MytripsOverview> {
             height: 690,
             child: ListView.builder(
               shrinkWrap: true,
-              itemCount: data.length,
+              itemCount: fetchdata.length,
               itemBuilder: (context, index) {
                 return GestureDetector(
                   onTap: () {
                     Navigator.push(context, MaterialPageRoute(builder: (_) {
-                      return OneTrip(key: UniqueKey(), data: data[index]);
+                      return OneTrip(key: UniqueKey(), data: fetchdata[index]);
                     }));
-                    print('Card tapped: ${data[index]['destination']}');
+                    print('Card tapped: ${fetchdata[index]['destination']}');
                   },
                   child: Card(
                     color: const Color(0xFFFFC161),
@@ -147,24 +127,45 @@ class _MytripsOverviewState extends State<MytripsOverview> {
                             height: 100,
                             width: 200,
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(
+                                  10), // Afgeronde hoeken toevoegen
                               color: Colors.yellow,
                             ),
+                            child: fetchdata[index]['fotosURL'] != null
+                                ? ClipRRect(
+                                    // ClipRRect om de afbeelding af te ronden
+                                    borderRadius: BorderRadius.circular(
+                                        10), // Dezelfde hoeken als de container
+                                    child: Image.network(
+                                      fetchdata[index]['fotosURL'],
+                                      fit: BoxFit.cover,
+                                    ),
+                                  )
+                                : const Center(
+                                    child: Text(
+                                      'No Image Available',
+                                      style: TextStyle(color: Colors.black),
+                                    ),
+                                  ),
                           ),
-                          const Padding(
-                            padding: EdgeInsets.only(top: 8.0),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                Text('01-01-2022'),
+                                Text(DateFormat('dd-MM-yyyy').format(
+                                    DateTime.parse(
+                                        fetchdata[index]['startDate']))),
                                 Text(' - '),
-                                Text('01-01-2022'),
+                                Text(DateFormat('dd-MM-yyyy').format(
+                                    DateTime.parse(
+                                        fetchdata[index]['endDate']))),
                               ],
                             ),
                           ),
                           Text(
-                            data[index]['destination'],
+                            fetchdata[index]['destination'],
                             style: const TextStyle(
                                 fontSize: 24, fontWeight: FontWeight.bold),
                           ),

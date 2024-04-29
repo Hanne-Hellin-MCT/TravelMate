@@ -20,6 +20,9 @@ dependencies:
   cloud_firestore: ^4.15.9
   firebase_auth: ^4.17.9
   firebase_core: ^2.27.1
+  http: ^1.1.0
+  firebase_storage: ^11.7.4
+  image_picker: ^0.8.4+5
 
 dev_dependencies:
   flutter_test:
@@ -33,3 +36,7 @@ flutter:
     - lib/assets/logo.svg
     - lib/assets/pasport.svg
     - lib/assets/wallet.svg
+    - lib/assets/biljet.svg
+    - lib/assets/auto.svg
+    - lib/assets/map.svg
+    - lib/assets/pin.svg

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:travelmate/provider/SetupAccountProvider.dart';
 import 'package:travelmate/routes/auth/credentials.dart';
 import 'package:travelmate/routes/setupaccount/setupaccount.dart';
 import 'package:travelmate/routes/travel/travelnavigationbar.dart';
 import 'package:travelmate/widgets/signinwithemail.dart';
+import 'package:http/http.dart' as http;
 
 class CreateAccount extends StatefulWidget {
   const CreateAccount({
@@ -20,11 +23,47 @@ class _CreateAccountState extends State<CreateAccount> {
 
   void CreateAccount() async {
     try {
-      final credential =
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      final FirebaseAuth _auth = FirebaseAuth.instance;
+      final credential = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
+
+      Future<String?> FirebaseIdToken = _auth.currentUser!.getIdToken();
+
+      if (FirebaseIdToken != null) {
+        final token = await FirebaseIdToken; // Await the Future
+        print('Token: $token');
+        // Use the token here (you're guaranteed it's a string)
+        final url = 'http://10.0.2.2:5092/auth/login';
+        final response = await http.post(
+          Uri.parse(
+              url), // Gebruik gewoon de URL-string zonder conversie naar Uri
+          body: {'idToken': token},
+        );
+
+        if (response.statusCode == 200) {
+          print('Token succesvol naar backend gestuurd');
+          print(response.body);
+          //clear setupaccountdata
+          
+          var uid = response.body.replaceAll('"', '');
+          Provider.of<SetupAccountData>(context, listen: false).setIdToken(uid);
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SetupAccount(),
+            ),
+          );
+        } else {
+          print(
+              'Fout bij het verzenden van token naar backend: ${response.statusCode}');
+        }
+      } else {
+        // Handle case where token is null (e.g., user not signed in)
+        print('Token is null');
+      }
+
       //sign de user in
       if (credential.user != null) {
         Navigator.pushReplacement(
@@ -107,6 +146,7 @@ class _CreateAccountState extends State<CreateAccount> {
                       password = value;
                     });
                   },
+                  obscureText: true,
                   decoration: InputDecoration(
                     labelText: 'Wachtwoord',
                     border: OutlineInputBorder(

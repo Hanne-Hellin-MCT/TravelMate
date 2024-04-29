@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import "package:story_view/story_view.dart";
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:http/http.dart' as http;
 
 class PossibleMatches extends StatefulWidget {
   final Map data;
@@ -21,8 +24,11 @@ class _PossibleMatchesState extends State<PossibleMatches> {
   @override
   void initState() {
     super.initState();
+    // Riep fetchTravelers aan om reisgegevens op te halen
+    fetchTravelers();
+
     // Initialiseer de lijst travelers hier
-    initializeTravelersList();
+    // initializeTravelersList();
   }
 
   void initializeTravelersList() {
@@ -81,6 +87,29 @@ class _PossibleMatchesState extends State<PossibleMatches> {
     });
   }
 
+  // fetch data from the backend
+  void fetchTravelers() async {
+    // Maak een GET request naar de backend
+    final tripId = widget.data['id'];
+    print(' tripId $tripId');
+    final url =
+        'http://10.0.2.2:5092/travelers/possiblematches/${tripId.toString()}';
+    final response = await http.get(Uri.parse(url));
+    print(response.body);
+
+    if (response.statusCode == 200) {
+      // Als de server een OK response geeft, parse de JSON data
+      print('status code 200');
+      final List<dynamic> data = jsonDecode(response.body);
+      // add to travelers list
+      setState(() {
+        travelers = data.cast<Map<String, dynamic>>();
+      });
+      print(data);
+      print(travelers);
+    }
+  }
+
   int currentIndex = 0;
 
   bool _onSwipe(int index, int? previousIndex, CardSwiperDirection direction) {
@@ -93,9 +122,31 @@ class _PossibleMatchesState extends State<PossibleMatches> {
 
       if (direction == CardSwiperDirection.right) {
         print('Kaart geswiped naar rechts');
+        //print the id of the traveler
+        print(travelers[index]['id']);
+        // print id of the trip
+        print(widget.data['id']);
+        final travelerid = travelers[index]['id'];
+        final tripid = widget.data['id'];
+        // Voeg de match toe aan de database
+        final url = 'http://userinteractions/accept/${travelerid}/${tripid}';
+
+        http.post(Uri.parse(url)).then((response) {
+          print('Response status: ${response.statusCode}');
+          print('Response body: ${response.body}');
+        });
       }
       if (direction == CardSwiperDirection.left) {
         print('Kaart geswiped naar links');
+        final travelerid = travelers[index]['id'];
+        final tripid = widget.data['id'];
+        // Voeg de match toe aan de database
+        final url = 'http://userinteractions/decline/${travelerid}/${tripid}';
+
+        http.post(Uri.parse(url)).then((response) {
+          print('Response status: ${response.statusCode}');
+          print('Response body: ${response.body}');
+        });
       }
     });
 
@@ -106,17 +157,6 @@ class _PossibleMatchesState extends State<PossibleMatches> {
 
   @override
   Widget build(BuildContext context) {
-    List<StoryItem> storyItems = [
-      StoryItem.pageImage(
-          url:
-              'https://reneeroaming.com/wp-content/uploads/2020/10/What-to-wear-hiking-as-a-woman-cute-hiking-boots-for-women-819x1024.jpg',
-          controller: controller),
-      StoryItem.pageImage(
-          url:
-              'https://www.reneeroaming.com/wp-content/uploads/2020/10/What-To-Wear-Hiking-As-A-Woman-Renee-Roaming.jpg',
-          controller: controller),
-    ];
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFFF7F6F0),
@@ -181,7 +221,11 @@ class _PossibleMatchesState extends State<PossibleMatches> {
                           width: MediaQuery.of(context).size.width,
                           height: 500,
                           child: StoryView(
-                            storyItems: storyItems,
+                            storyItems: travelers[index]['photoUrls']
+                                .map<StoryItem>((url) {
+                              return StoryItem.pageImage(
+                                  url: url.toString(), controller: controller);
+                            }).toList(),
                             progressPosition: ProgressPosition.top,
                             // dont go automatically to the next page
                             repeat: true,
@@ -197,14 +241,14 @@ class _PossibleMatchesState extends State<PossibleMatches> {
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 8.0, top: 8.0),
-                          child: Text(travelers[index]['Name']!,
+                          child: Text(travelers[index]['name'] ?? 'No name',
                               style: const TextStyle(
                                   fontSize: 24, fontWeight: FontWeight.bold)),
                         ),
                         Wrap(
                           spacing: 8.0, // Spacing between the containers
-                          children: travelers[index]['Features'] != null
-                              ? travelers[index]['Features']
+                          children: travelers[index]['features'] != null
+                              ? travelers[index]['features']
                                   .map<Widget>((feature) {
                                   return Container(
                                     padding: const EdgeInsets.symmetric(
@@ -232,7 +276,7 @@ class _PossibleMatchesState extends State<PossibleMatches> {
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 8.0),
-                          child: Text(travelers[index]['Bio'].toString()),
+                          child: Text(travelers[index]['bio'].toString()),
                         ),
                       ],
                     ),

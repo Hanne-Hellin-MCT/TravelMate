@@ -14,6 +14,13 @@ class OneTrip extends StatefulWidget {
 
 class _OneTripState extends State<OneTrip> {
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print('Data: ${widget.data}');
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -52,9 +59,11 @@ class _OneTripState extends State<OneTrip> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(DateFormat('dd MMMM').format(widget.data['startdate'])),
+                Text(DateFormat('dd MMMM')
+                    .format(DateTime.parse(widget.data['startDate']))),
                 const Text(' - '),
-                Text(DateFormat('dd MMMM').format(widget.data['enddate'])),
+                Text(DateFormat('dd MMMM')
+                    .format(DateTime.parse(widget.data['endDate']))),
               ],
             ),
             Container(
@@ -64,6 +73,22 @@ class _OneTripState extends State<OneTrip> {
                 borderRadius: BorderRadius.circular(10),
                 color: const Color(0xFFFBB03B),
               ),
+              child: widget.data['fotosURL'] != null
+                  ? ClipRRect(
+                      // ClipRRect om de afbeelding af te ronden
+                      borderRadius: BorderRadius.circular(
+                          10), // Dezelfde hoeken als de container
+                      child: Image.network(
+                        widget.data['fotosURL'],
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                  : const Center(
+                      child: Text(
+                        'No Image Available',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ),
             ),
 
             //knoppen
@@ -71,7 +96,7 @@ class _OneTripState extends State<OneTrip> {
               padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
               child: ElevatedButton(
                 onPressed: () {
-                   Navigator.push(context, MaterialPageRoute(builder: (_) {
+                  Navigator.push(context, MaterialPageRoute(builder: (_) {
                     return PossibleMatches(key: UniqueKey(), data: widget.data);
                   }));
                   print('bekijk wie mee wil');

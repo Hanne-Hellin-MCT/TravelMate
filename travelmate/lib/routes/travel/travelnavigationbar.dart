@@ -21,7 +21,7 @@ class _TravelMateNavigationState extends State<TravelMateNavigation> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
+    currentPageIndex = 1;
     // print('Provider addtripdata INITSTATE nav');
     // print(Provider.of<AddTripData>(context).tripname);
   }

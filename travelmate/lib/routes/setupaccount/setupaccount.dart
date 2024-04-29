@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:travelmate/widgets/setupaccount/setupaccountname.dart';
@@ -10,6 +12,7 @@ import 'package:travelmate/widgets/setupaccount/setupaccountvoorkeuren.dart';
 import 'package:travelmate/provider/SetupAccountProvider.dart';
 import 'package:provider/provider.dart';
 import 'package:travelmate/routes/travel/travelnavigationbar.dart';
+import 'package:http/http.dart' as http;
 
 class SetupAccount extends StatefulWidget {
   const SetupAccount({Key? key}) : super(key: key);
@@ -39,15 +42,17 @@ class _SetupAccountState extends State<SetupAccount> {
       } else {
         final String name = context.read<SetupAccountData>().name;
         final String gender = context.read<SetupAccountData>().gender;
-        final String birthdate = context.read<SetupAccountData>().birthdate;
+        final DateTime birthdate = context.read<SetupAccountData>().birthdate;
         final String bio = context.read<SetupAccountData>().bio;
         final List<String> interests =
             context.read<SetupAccountData>().interests;
         final List<String> voorkeuren =
             context.read<SetupAccountData>().getVoorkeuren();
         print('naam: $name');
+        print('id token: ${context.read<SetupAccountData>().idtoken}');
         print('geslacht: $gender');
         print('birthdate: $birthdate');
+        print('fotos: ${context.read<SetupAccountData>().fotosurls}');
         print('bio: $bio');
         print('interests: $interests');
         print('voorkeuren: $voorkeuren');
@@ -57,14 +62,48 @@ class _SetupAccountState extends State<SetupAccount> {
     });
   }
 
-  void _submitData() {
+  void _submitData() async {
     // Verstuur de data naar de server
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => TravelMateNavigation(),
+
+    // push naar backend
+    final url = 'http://10.0.2.2:5092/travelers';
+    final response = await http.post(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(
+        <String, dynamic>{
+          'Id': context.read<SetupAccountData>().idtoken,
+          'Name': context.read<SetupAccountData>().name,
+          'Birthdate':
+              context.read<SetupAccountData>().birthdate.toIso8601String(),
+          'Gender': context.read<SetupAccountData>().gender,
+          'Bio': context.read<SetupAccountData>().bio,
+          'PhotoUrls': context.read<SetupAccountData>().fotosurls,
+          'Features': context.read<SetupAccountData>().interests,
+          'PreferredGender': context.read<SetupAccountData>().gendervoorkeur,
+          'PreferredDistance': context.read<SetupAccountData>().afstandvoorkeur,
+          'PreferredMinAge': 18,
+          'PreferredMaxAge': 25,
+        },
       ),
     );
+
+    // repsone
+    if (response.statusCode == 200) {
+      print('Data succesvol naar de server gestuurd');
+      print(response.body);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => TravelMateNavigation(),
+        ),
+      );
+    } else {
+      print(
+          'Fout bij het verzenden van data naar de server: ${response.statusCode}');
+    }
   }
 
   @override

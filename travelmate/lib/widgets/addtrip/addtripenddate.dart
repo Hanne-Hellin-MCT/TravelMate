@@ -20,15 +20,14 @@ class _AddTripEndDateState extends State<AddTripEndDate> {
   @override
   void initState() {
     super.initState();
-    // Haal de geboortedatum op als een string uit de provider
-    String? EndDateString =
-        Provider.of<AddTripData>(context, listen: false).enddate;
-    // Converteer de string naar een DateTime object
-    _selectedDate = _parsedate(EndDateString);
-    // Stel de controller in met de geconverteerde datum
-    _dateController.text = _selectedDate != null
-        ? DateFormat('dd-MM-yyyy').format(_selectedDate!)
-        : 'Selecteer een datum';
+    Future.delayed(Duration.zero, () {
+      String? enddateString =
+          Provider.of<AddTripData>(context, listen: false).enddate.toString();
+      _selectedDate = _parsedate(enddateString);
+      _dateController.text = _selectedDate != null
+          ? DateFormat('dd-MM-yyyy').format(_selectedDate!)
+          : 'Selecteer een datum';
+    });
   }
 
   DateTime? _parsedate(String? EndDateString) {
@@ -58,8 +57,8 @@ class _AddTripEndDateState extends State<AddTripEndDate> {
       String formattedDate = DateFormat('dd-MM-yyyy').format(_selectedDate!);
       //check of de einddatum na de startdatum is
       if (Provider.of<AddTripData>(context, listen: false).startdate != null) {
-        DateTime? startdate = DateFormat('dd-MM-yyyy')
-            .parse(Provider.of<AddTripData>(context, listen: false).startdate!);
+        DateTime? startdate =
+            Provider.of<AddTripData>(context, listen: false).startdate!;
         if (picked.isBefore(startdate)) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -70,8 +69,10 @@ class _AddTripEndDateState extends State<AddTripEndDate> {
         }
       }
       // Stel de geformatteerde datum in op de provider
+      Provider.of<AddTripData>(context, listen: false).setEnddate(
+          DateFormat('dd-MM-yyyy').parse(formattedDate) as DateTime);
       // ignore: use_build_context_synchronously
-      context.read<AddTripData>().setEnddate(formattedDate);
+      context.read<AddTripData>().setEnddate(formattedDate as DateTime);
     }
   }
 

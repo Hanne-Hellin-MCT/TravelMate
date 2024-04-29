@@ -15,7 +15,7 @@ class _SetupAccountGenderState extends State<SetupAccountGender> {
   final List<String> gender = [
     'Man',
     'Vrouw',
-    'Iedereen',
+    'Anders',
   ];
 
   @override

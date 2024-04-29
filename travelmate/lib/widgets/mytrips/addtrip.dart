@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:travelmate/provider/addtripprovider.dart';
+import 'package:travelmate/routes/setupaccount/setupaccount.dart';
 import 'package:travelmate/routes/travel/mytrips.dart';
 import 'package:travelmate/widgets/addtrip/addtripenddate.dart';
 import 'package:travelmate/widgets/addtrip/addtripstartdate.dart';
@@ -12,6 +15,8 @@ import 'package:travelmate/widgets/addtrip/addtripdescription.dart';
 import 'package:travelmate/widgets/addtrip/addtripphoto.dart';
 import 'package:travelmate/widgets/addtrip/addtripvoorkeuren.dart';
 import 'package:travelmate/routes/travel/travelnavigationbar.dart';
+import 'package:travelmate/provider/SetupAccountProvider.dart';
+import 'package:http/http.dart' as http;
 
 class AddTrip extends StatefulWidget {
   const AddTrip({Key? key}) : super(key: key);
@@ -50,7 +55,7 @@ class _AddTripState extends State<AddTrip> {
     });
   }
 
-  void _submitData() {
+  void _submitData() async {
     // print alle data uit de provider
     print(Provider.of<AddTripData>(context, listen: false).tripname);
     print(Provider.of<AddTripData>(context, listen: false).startdate);
@@ -61,9 +66,62 @@ class _AddTripState extends State<AddTrip> {
     print(Provider.of<AddTripData>(context, listen: false).leeftijdvoorkeur);
     print(Provider.of<AddTripData>(context, listen: false).gendervoorkeur);
     print(Provider.of<AddTripData>(context, listen: false).afstandvoorkeur);
+    print(Provider.of<AddTripData>(context, listen: false).imageUrl);
+
+    // Voeg de trip toe aan de database
+
+    try {
+      // Voeg de trip toe aan de database
+      final url = 'http://10.0.2.2:5092/trips/';
+      // Maak een POST request naar de backend
+      // make featureslist readable for backend
+
+      final response = await http.post(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'Destination':
+              Provider.of<AddTripData>(context, listen: false).tripname,
+          'name': Provider.of<AddTripData>(context, listen: false).tripname,
+          'EndDate': Provider.of<AddTripData>(context, listen: false)
+              .enddate
+              .toIso8601String(),
+          'StartDate': Provider.of<AddTripData>(context, listen: false)
+              .startdate
+              .toIso8601String(),
+          'Features': Provider.of<AddTripData>(context, listen: false).features,
+          'Description':
+              Provider.of<AddTripData>(context, listen: false).description,
+          'FotosURL': Provider.of<AddTripData>(context, listen: false).imageUrl,
+          'Voorkeursleeftijd':
+              Provider.of<AddTripData>(context, listen: false).leeftijdvoorkeur,
+          'Voorkeursgender':
+              Provider.of<AddTripData>(context, listen: false).gendervoorkeur,
+          'TravelerId':
+              Provider.of<SetupAccountData>(context, listen: false).getIdToken()
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        print('Trip added successfully');
+        Provider.of<AddTripData>(context, listen: false).resetData();
+        Navigator.push(
+            context, MaterialPageRoute(builder: (_) => TravelMateNavigation()));
+      } else {
+        print('Error adding trip: ${response.statusCode}');
+        print(response.body);
+      }
+
+      // Gebruik de data uit de provider om de trip toe te voegen
+    } catch (e) {
+      // Vang eventuele fouten op
+      print('Error adding trip: $e');
+      print('Failed to add trip');
+    }
 
     // Navigeer terug naar de overzichtspagina
-    Navigator.push(context, MaterialPageRoute(builder: (_) => MyTrips()));
   }
 
   void _previousStep() {

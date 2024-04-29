@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 
 class AddTripData with ChangeNotifier {
   String destination = '';
-  String startdate = '';
-  String enddate = '';
+  late DateTime startdate;
+  late DateTime enddate;
   List<String> features = [];
   String description = '';
   //fotos
+  String imageUrl = '';
   String tripname = '';
   String leeftijdvoorkeur = '';
   String gendervoorkeur = '';
@@ -17,12 +18,12 @@ class AddTripData with ChangeNotifier {
     notifyListeners();
   }
 
-  void setStartdate(String newStartdate) {
+  void setStartdate(DateTime newStartdate) {
     startdate = newStartdate;
     notifyListeners();
   }
 
-  void setEnddate(String newEnddate) {
+  void setEnddate(DateTime newEnddate) {
     enddate = newEnddate;
     notifyListeners();
   }
@@ -82,11 +83,11 @@ class AddTripData with ChangeNotifier {
     return destination;
   }
 
-  String getStartdate() {
+  DateTime getStartdate() {
     return startdate;
   }
 
-  String getEnddate() {
+  DateTime getEnddate() {
     return enddate;
   }
 
@@ -96,5 +97,20 @@ class AddTripData with ChangeNotifier {
 
   String getUitleg() {
     return description;
+  }
+
+  //reset data
+  void resetData() {
+    destination = '';
+    startdate = DateTime.now();
+    enddate = DateTime.now();
+    features = [];
+    description = '';
+    imageUrl = '';
+    tripname = '';
+    leeftijdvoorkeur = '';
+    gendervoorkeur = '';
+    afstandvoorkeur = '';
+    notifyListeners();
   }
 }
