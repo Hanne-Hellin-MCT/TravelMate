@@ -23,13 +23,17 @@ class _PossibleMatchesState extends State<PossibleMatches> {
 
   @override
   void initState() {
+    fetchTravelers().then((_) {
+      // This code will execute after fetchData completes
+      print("fetchdata");
+      print(travelers);
+    });
     super.initState();
     // Riep fetchTravelers aan om reisgegevens op te halen
-    fetchTravelers();
   }
 
   // fetch data from the backend
-  void fetchTravelers() async {
+  fetchTravelers() async {
     // Maak een GET request naar de backend
     final tripId = widget.data['id'];
     print(' tripId $tripId');
@@ -137,9 +141,10 @@ class _PossibleMatchesState extends State<PossibleMatches> {
                   const Text(
                     'Oeps! Geen mogelijke matches meer voor deze trip!',
                     style: TextStyle(
-                        fontSize: 20,
-                        color: Color(0xFFFBB03B),
-                        fontWeight: FontWeight.bold),
+                      fontSize: 20,
+                      color: Color(0xFFFBB03B),
+                      fontWeight: FontWeight.bold,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                 ],

@@ -66,10 +66,28 @@ class _signinwithemailState extends State<signinwithemail> {
       } on FirebaseAuthException catch (e) {
         if (e.code == 'user-not-found') {
           print('No user found for that email.');
+          // Show alert dialog
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Error tijdens inloggen, probeer opnieuw.'),
+            ),
+          );
         } else if (e.code == 'wrong-password') {
           print('Wrong password provided for that user.');
+          // Show alert dialog
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                  'Paswoord incorrect, probeer opnieuw of reset uw paswoord.'),
+            ),
+          );
         } else {
           print('Error: $e');
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Fout bij inloggen, probeer opnieuw.'),
+            ),
+          );
         }
       }
     } else {

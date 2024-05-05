@@ -83,13 +83,29 @@ class _TripMatchesState extends State<TripMatches> {
                 itemBuilder: (BuildContext context, int index) {
                   final traveler = travelers[index];
                   return Card(
-                    child: ListTile(
-                      title: Text(traveler['name']),
-                      onTap: () {
-                        // Add functionality when tapping on a traveler card
-                        print('Selected traveler: ${traveler['name']}');
-                      },
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                      side: BorderSide(color: Color(0xFFFBB03B), width: 2.0),
                     ),
+                    child: ListTile(
+                        title: Text(
+                          traveler['name'],
+                          style: const TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        onTap: () {
+                          // Add functionality when tapping on a traveler card
+                          print('Selected traveler: ${traveler['name']}');
+                          _showChatAppPopup(context, traveler['name']);
+                        },
+                        //ronde hoeken
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                        //kleur van de kaart
+                        //randen van de kaart geel
+                        tileColor: Color(0xFFFBB03B).withOpacity(0.2),
+                        selectedTileColor: Color(0xFFFBB03B).withOpacity(0.5)),
                   );
                 },
               ),
@@ -99,4 +115,24 @@ class _TripMatchesState extends State<TripMatches> {
       ),
     );
   }
+}
+
+void _showChatAppPopup(BuildContext context, String travelerName) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Chat met $travelerName'),
+        content: Text('Chat functionaliteit is nog niet geïmplementeerd'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Sluit de pop-up
+            },
+            child: Text('Sluiten'),
+          ),
+        ],
+      );
+    },
+  );
 }
